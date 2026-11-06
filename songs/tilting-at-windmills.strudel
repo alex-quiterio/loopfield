@@ -1,0 +1,47 @@
+// TILTING AT WINDMILLS — devotional hijaz · 100 bpm · E phrygian dominant
+// Everyone else sees windmills. He sees giants, and rides at them anyway, because someone has to believe first.
+// 160 bars · 6:24
+setcpm(100/4)
+
+// --- harmony: E, F, E, Dm, two bars each: the old hijaz sway ---------------------
+const chords = "<[e3,g#3,b3] [f3,a3,c4] [e3,g#3,b3] [d3,f3,a3]>/2"
+const roots = "<e1 f1 e1 d1>/2"
+
+// --- La Mancha ---------------------------------------------------------------
+const wind = s("wind").n("<1 4 7>").slow(4).speed(.7).lpf(2400).room(1).gain(.3)
+const sitar = note("[e3,b3,e4]").s("gm_sitar").struct("x ~ x x ~ x ~ x").room(.6).gain(.32)
+const harmonium = note(chords).s("gm_reed_organ").attack(.4).release(1).room(.6).gain(.32)
+const drone = note("e1").s("sine").attack(1).release(2).gain(.4)
+
+// the vow: a devotional melody that climbs toward the flattened sixth and falls back
+const vow = note("<[e4@2 f4 g#4] [a4@3 g#4] [f4@2 e4 f4] [e4@4] [g#4@2 a4 b4] [c5@3 b4] [a4 g#4 f4 e4] [d4@2 e4@2]>")
+const voice = vow.s("gm_voice_oohs").attack(.15).release(1).room(.9).roomsize(6).gain(.45)
+const voiceHigh = vow.add(note(12)).s("gm_voice_oohs").attack(.15).release(1).room(.9).gain(.3)
+const shanai = vow.s("gm_shanai").release(.6).room(.7).gain(.22)
+
+// --- the ride ------------------------------------------------------------------
+const taali = s("cp ~ ~ cp ~ ~ cp ~").bank("RolandTR808").room(.5)
+const dhol = stack(
+  note("[e2 ~ e2 ~] [~ e2 [e2 e2] ~]").s("gm_taiko_drum").lpf(1400).gain(.5),
+  s("~ lt ~ [lt mt]").bank("LinnDrum").room(.4).gain(.35),
+)
+const guitar = note(chords).s("gm_acoustic_guitar_nylon").struct("x ~ x x ~ x x ~").gain(.42)
+const bass = note(roots).struct("x ~ ~ x ~ ~ x ~").s("gm_acoustic_bass").gain(.6)
+
+// --- the giants ------------------------------------------------------------------
+const windmills = note(chords).add(note(12)).s("supersaw").struct("x*8")
+  .decay(.15).sustain(0).lpf(sine.range(400, 3000).slow(4)).pan(sine).room(.6).gain(.12)
+const strings = note(chords).s("gm_string_ensemble_1").attack(.6).release(1.5).gain(.32)
+const choir = note(chords).add(note(12)).s("gm_choir_aahs").attack(.5).release(1.5).room(1).gain(.3)
+
+// --- the quest -------------------------------------------------------------------
+arrange(
+  [16, stack(wind, sitar, harmonium.gain(.18), drone)],                                   // La Mancha
+  [24, stack(sitar, harmonium, drone, voice, taali.gain(.25))],                           // the vow
+  [32, stack(sitar, harmonium, voice, taali.gain(.35), dhol, guitar, bass)],              // the ride
+  [32, stack(harmonium, shanai, taali.fast(2).gain(.3), dhol, guitar, bass,
+             windmills, strings)],                                                        // giants on the horizon
+  [40, stack(harmonium, voice, voiceHigh, shanai, taali.fast(2).gain(.4), dhol, guitar,
+             bass, windmills, strings, choir, drone)],                                    // the impossible faith
+  [16, stack(wind, harmonium.gain(.2), voice.gain(.3), sitar.gain(.2))],                  // dust, and a smile
+)
