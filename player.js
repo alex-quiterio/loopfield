@@ -296,7 +296,7 @@ setInterval(tickClock, 1000);
   } catch (err) {
     $("#now").textContent = "signal lost";
     $("#blurb").textContent =
-      "Could not load the songs. Serve this folder over HTTP (for example `python3 -m http.server`) instead of opening the file directly.";
+      "Could not load the songs. Serve this folder over HTTP (for example `npx serve`) instead of opening the file directly.";
     console.error(err);
   }
 })();

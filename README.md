@@ -99,7 +99,7 @@ Like the music, the art is code. [`art/make_art.rb`](art/make_art.rb) draws the 
 The player fetches the `.strudel` files, so serve the folder rather than opening it as a file:
 
 ```sh
-python3 -m http.server 8000
+npx serve -l 8000
 # then open http://localhost:8000
 ```
 
