@@ -1,15 +1,15 @@
 :root {
-  --bg: #0b0d17;
-  --panel: #131726;
-  --cell: #1d2235;
-  --cell-beat: #262c44;
-  --line: #2c3350;
+  --bg: #07070b;
+  --panel: #0f0f16;
+  --cell: #181822;
+  --cell-beat: #22222f;
+  --line: #2a2a3a;
   --text: #e6e8f2;
   --muted: #8a90aa;
-  --drum: #7ee787;
-  --bass: #ff7ab6;
-  --lead: #79c0ff;
-  --hot: #ffd76a;
+  --drum: #3df2ff;
+  --bass: #ff2e4d;
+  --lead: #ffb000;
+  --hot: #ff2e4d;
 }
 
 * { box-sizing: border-box; }
@@ -100,3 +100,4 @@ footer { padding: 8px 16px 32px; text-align: center; color: var(--muted); font-s
   .row { grid-template-columns: 120px 1fr; }
   .head .level { display: none; }
 }
+h1 a { color: var(--drum); text-decoration: none; }
