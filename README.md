@@ -92,7 +92,7 @@ The logo is three looped rings of 3, 5 and 7 lobes around one centre: cycles tha
 - **The Old World:** a sun whose rays are a frozen frequency spectrum.
 - **Edges of the Map:** aurora over the ice, with a polar station at one end and a fire at the other.
 
-Like the music, the art is code. [`art/make_art.py`](art/make_art.py) draws the logo and every cover as SVG from fixed random seeds, so `python3 art/make_art.py` reproduces them exactly.
+Like the music, the art is code. [`art/make_art.rb`](art/make_art.rb) draws the logo and every cover as SVG from fixed random seeds, so `ruby art/make_art.rb` reproduces them exactly.
 
 ## Run it locally
 
