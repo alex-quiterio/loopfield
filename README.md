@@ -1,10 +1,19 @@
-# LOOPFIELD
+<p align="center"><img src="art/logo-wordmark.svg" alt="loopfield" width="600" /></p>
+
+<p align="center">
+  <img src="art/covers/quixote.svg" alt="The Quixote Protocol" width="200" />
+  <img src="art/covers/city.svg" alt="Transmissions from 2089" width="200" />
+  <img src="art/covers/old.svg" alt="The Old World" width="200" />
+  <img src="art/covers/edge.svg" alt="Edges of the Map" width="200" />
+</p>
 
 Albums of electronic music written as code. Every song is a short program: rhythms, harmonies, voices and noise described as patterns that loop, build and fall away while they play. Pick an album, press play, and rewrite any song while it runs.
 
 **▶ Listen and edit live: [alex-quiterio.github.io/loopfield](https://alex-quiterio.github.io/loopfield/)**
 
 ## I · The Quixote Protocol
+
+<img src="art/covers/quixote.svg" alt="The Quixote Protocol cover" width="320" align="right" />
 
 > *“The most important duty of our lives is to inspire one another.”*
 
@@ -21,15 +30,27 @@ An album in six movements, about 37 minutes. It goes from a rocket's countdown t
 
 ## II · Transmissions from 2089
 
+<img src="art/covers/city.svg" alt="Transmissions from 2089 cover" width="180" align="right" />
+
 Four signals recovered from a city that never sleeps: [Curfew](songs/curfew.strudel) (industrial techno), [The Arcology Sleeps](songs/arcology.strudel) (dark ambient), [Surveillance Choir](songs/surveillance-choir.strudel) (darkwave) and [Signal Lost](songs/signal-lost.strudel) (glitch electro).
+
+<br clear="right" />
 
 ## III · The Old World
 
+<img src="art/covers/old.svg" alt="The Old World cover" width="180" align="right" />
+
 Fire, stone and a long road east: [The Long Road East](songs/the-long-road-east.strudel) (pastoral folk in 6/8), [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) (dark choral) and [The Ember Crown](songs/the-ember-crown.strudel) (epic hybrid).
+
+<br clear="right" />
 
 ## IV · Edges of the Map
 
+<img src="art/covers/edge.svg" alt="Edges of the Map cover" width="180" align="right" />
+
 Ice at one end of the world and drums at the other: [Polar Night Station](songs/polar-night-station.strudel) (arctic ambient) and [Red Earth Gathering](songs/red-earth-gathering.strudel) (tribal percussion).
+
+<br clear="right" />
 
 ## How the music is made
 
@@ -61,6 +82,17 @@ A few ideas do most of the work:
 - **Albums play through**, with a progress bar and the current bar of the arrangement.
 - **Live editing.** Change any line and press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>; <kbd>Ctrl</kbd> + <kbd>.</kbd> stops. **Open in Strudel** sends your edited version to [strudel.cc](https://strudel.cc).
 - **Keys.** <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or stops, arrows step through, <kbd>[</kbd> <kbd>]</kbd> change album, <kbd>R</kbd> picks one at random.
+
+## The art
+
+The logo is three looped rings of 3, 5 and 7 lobes around one centre: cycles that never quite line up, like the voices in *One Honest Node*. Each cover pictures its album's world:
+
+- **The Quixote Protocol:** a windmill at dusk with a starling murmuration and an orbiting sun.
+- **Transmissions from 2089:** a broken signal ring in red and cyan.
+- **The Old World:** a sun whose rays are a frozen frequency spectrum.
+- **Edges of the Map:** aurora over the ice, with a polar station at one end and a fire at the other.
+
+Like the music, the art is code. [`art/make_art.py`](art/make_art.py) draws the logo and every cover as SVG from fixed random seeds, so `python3 art/make_art.py` reproduces them exactly.
 
 ## Run it locally
 
