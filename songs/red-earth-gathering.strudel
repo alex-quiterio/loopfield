@@ -1,0 +1,31 @@
+// RED EARTH GATHERING — tribal percussion · 118 bpm · A minor pentatonic
+// A fire in the middle, drums all around it, and a rhythm older than any city.
+setcpm(118/4)
+
+stack(
+  // the mother drum: deep and steady, the ground everyone dances on
+  note("a1 ~ ~ a1 ~ ~ a1 ~ ~ ~ a1 ~ a1 ~ ~ ~").s("gm_taiko_drum").room(.4).gain(.9),
+
+  // three toms in three different Euclidean cycles, rubbing against each other
+  s("lt(3,8), mt(5,16,2), ht(7,16,5)").bank("RolandTR808").room(.3).pan("<.3 .7>").gain(.45),
+
+  // hands: claps, an agogo bell and shakers answering each other
+  s("~ cp ~ [~ cp] ~ cp ~ ~").bank("RolandTR808").room(.5).gain(.35),
+  note("[a4 ~ e5 ~] [~ a4 e5 ~] [a4 ~ ~ e5] [~ e5 a4 ~]").s("gm_agogo").gain(.3),
+  s("sh*16").bank("RolandTR808").gain("[.3 .12 .2 .12]*4").swingBy(1/6, 8),
+
+  // a breathing low drone, shaped by a vowel filter
+  note("a1").s("sawtooth").vowel("<o a o u>/2").lpf(900)
+    .attack(.3).release(.5).gain(.25),
+
+  // kalimba from bar 5
+  n("0 2 4 2 5 4 2 4".add("<0 0 -1 1>")).scale("A4:minor:pentatonic")
+    .s("gm_kalimba").degradeBy(.2).gain(.35)
+    .mask("<0!4 1!12>"),
+
+  // voices join the circle at bar 9
+  n("<[0 ~ 2 ~ 3 ~ 2 0] [4 ~ 3 2 ~ ~ 0 ~] [0 ~ 2 ~ 3 4 3 2] [1 ~ 0 ~ ~ ~ ~ ~]>")
+    .scale("A3:minor:pentatonic")
+    .s("gm_voice_oohs").room(.7).gain(.45)
+    .mask("<0!8 1!8>"),
+)
