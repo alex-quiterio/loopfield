@@ -26,8 +26,22 @@ const Engine = (() => {
       g.connect(filter);
       buses[id] = g;
     }
+
+    // Dotted-eighth echo: lead and perc feed it, it feeds the master filter.
+    delay = ctx.createDelay(2);
+    delayFb = ctx.createGain();
+    delayFb.gain.value = 0.38;
+    delaySend = ctx.createGain();
+    const tone = filt("lowpass", 3200);
+    delaySend.connect(delay).connect(tone).connect(delayFb).connect(delay);
+    tone.connect(filter);
+    for (const id of ["lead", "perc"]) if (buses[id]) buses[id].connect(delaySend);
     return ctx;
   }
+
+  let delay, delayFb, delaySend;
+  const setDelay = (v) => ctx && smooth(delaySend.gain, v);
+  const setDelayTime = (bpm) => ctx && smooth(delay.delayTime, 0.75 * (60 / bpm));
 
   const smooth = (param, value) => param.setTargetAtTime(value, ctx.currentTime, 0.02);
   const setCutoff = (x) => ctx && smooth(filter.frequency, 200 * Math.pow(100, x));
@@ -115,9 +129,54 @@ const Engine = (() => {
 
   const trigger = (id, t, v) => drums[id](t, v, buses[id]);
 
+  // --- synth voices ------------------------------------------------------
+  const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+  function bass(t, midi, dur, out = buses.bass) {
+    const o = osc("sawtooth", t, dur + 0.1);
+    const sub = osc("square", t, dur + 0.1);
+    o.frequency.value = mtof(midi);
+    sub.frequency.value = mtof(midi - 12);
+    const subG = gain();
+    subG.gain.value = 0.35;
+    const f = filt("lowpass", 180, 9);
+    f.frequency.setValueAtTime(1900, t);
+    f.frequency.exponentialRampToValueAtTime(170, t + Math.max(dur, 0.08));
+    const g = gain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.5, t + 0.005);
+    g.gain.setValueAtTime(0.5, t + dur);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.06);
+    o.connect(f);
+    sub.connect(subG).connect(f);
+    f.connect(g).connect(out);
+  }
+
+  function lead(t, midi, dur, out = buses.lead) {
+    const f = filt("lowpass", 900, 4);
+    f.frequency.setValueAtTime(4200, t);
+    f.frequency.exponentialRampToValueAtTime(900, t + 0.25);
+    const g = gain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.1, t + dur);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.12);
+    for (const cents of [-8, 8]) {
+      const o = osc("sawtooth", t, dur + 0.15);
+      o.frequency.value = mtof(midi);
+      o.detune.value = cents;
+      o.connect(f);
+    }
+    f.connect(g).connect(out);
+  }
+
   return {
     init,
     trigger,
+    bass,
+    lead,
+    setDelay,
+    setDelayTime,
     setCutoff,
     setMaster,
     setTrackLevel,

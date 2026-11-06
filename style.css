@@ -82,6 +82,10 @@ main { display: grid; gap: 16px; padding: 16px; max-width: 1100px; margin: 0 aut
   background: var(--cell);
 }
 .cell:nth-child(4n + 1) { background: var(--cell-beat); }
+.roll { gap: 2px; }
+.roll .cell { --on: inherit; aspect-ratio: 2 / 1; border-radius: 3px; }
+.roll .steps { gap: 4px 4px; }
+.head.note { justify-content: flex-end; font-size: 11px; }
 .cell.on { background: color-mix(in srgb, var(--on) 70%, var(--bg)); }
 .cell.accent { background: var(--on); box-shadow: 0 0 10px color-mix(in srgb, var(--on) 60%, transparent); }
 .cell.playhead { border-color: var(--text); }

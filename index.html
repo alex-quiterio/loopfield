@@ -13,6 +13,8 @@
       <button id="play" class="play" title="Space">▶ Play</button>
       <label>BPM <input id="bpm" type="number" min="60" max="200" /></label>
       <label>Swing <input id="swing" type="range" min="0" max="0.45" step="0.01" /></label>
+      <label>Key <select id="root"></select></label>
+      <select id="scale" title="Scale"></select>
     </div>
   </header>
 
@@ -22,9 +24,20 @@
       <div id="drums" class="grid"></div>
     </section>
 
+    <section class="panel">
+      <h2>Bass</h2>
+      <div id="bass" class="grid roll" style="--on: var(--bass)"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Lead</h2>
+      <div id="lead" class="grid roll" style="--on: var(--lead)"></div>
+    </section>
+
     <section class="panel mix">
       <h2>Master</h2>
       <label>Filter <input id="cutoff" type="range" min="0" max="1" step="0.001" /></label>
+      <label>Echo <input id="delay" type="range" min="0" max="0.8" step="0.01" /></label>
       <label>Volume <input id="master" type="range" min="0" max="1" step="0.01" /></label>
     </section>
   </main>

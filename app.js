@@ -7,19 +7,41 @@ const DRUMS = [
   { id: "open", name: "Open hat" },
   { id: "perc", name: "Perc" },
 ];
-const TRACKS = DRUMS.map((d) => d.id);
+const SYNTHS = [
+  { id: "bass", name: "Bass", octave: 36 },
+  { id: "lead", name: "Lead", octave: 60 },
+];
+const TRACKS = [...DRUMS.map((d) => d.id), ...SYNTHS.map((s) => s.id)];
+const ROWS = 8; // scale degrees shown in each piano roll, low to high
+
+const SCALES = {
+  minor: [0, 2, 3, 5, 7, 8, 10],
+  dorian: [0, 2, 3, 5, 7, 9, 10],
+  phrygian: [0, 1, 3, 5, 7, 8, 10],
+  major: [0, 2, 4, 5, 7, 9, 11],
+  "minor pentatonic": [0, 3, 5, 7, 10],
+  "major pentatonic": [0, 2, 4, 7, 9],
+};
+const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
 function emptyPattern() {
-  return { drums: Object.fromEntries(DRUMS.map((d) => [d.id, Array(STEPS).fill(0)])) };
+  return {
+    drums: Object.fromEntries(DRUMS.map((d) => [d.id, Array(STEPS).fill(0)])),
+    bass: Array(STEPS).fill(-1),
+    lead: Array(STEPS).fill(-1),
+  };
 }
 
 const state = {
   bpm: 124,
   swing: 0.12,
+  root: 9, // A
+  scale: "minor",
   cutoff: 0.85,
+  delay: 0.3,
   master: 0.8,
   levels: Object.fromEntries(TRACKS.map((id) => [id, 0.8])),
   muted: {},
@@ -28,6 +50,13 @@ const state = {
 
 const pat = () => state.pattern;
 function changed() {}
+
+// Scale degree -> MIDI note, wrapping into higher octaves.
+function degreeToMidi(degree, base) {
+  const sc = SCALES[state.scale];
+  return base + state.root + sc[degree % sc.length] + 12 * Math.floor(degree / sc.length);
+}
+const noteName = (midi) => NOTE_NAMES[midi % 12] + (Math.floor(midi / 12) - 1);
 
 // --- rendering -------------------------------------------------------------
 function rowHead(id, name) {
@@ -58,13 +87,38 @@ function renderDrums() {
   }
 }
 
+function renderRolls() {
+  for (const syn of SYNTHS) {
+    const el = $(`#${syn.id}`);
+    el.innerHTML = "";
+    const head = document.createElement("div");
+    head.className = "row";
+    head.innerHTML = rowHead(syn.id, syn.name) + "<div></div>";
+    el.appendChild(head);
+    for (let r = ROWS - 1; r >= 0; r--) {
+      const row = document.createElement("div");
+      row.className = "row note-row";
+      row.innerHTML = `<div class="head note">${noteName(degreeToMidi(r, syn.octave))}</div><div class="steps"></div>`;
+      const steps = row.querySelector(".steps");
+      for (let s = 0; s < STEPS; s++) steps.appendChild(makeCell({ kind: "note", track: syn.id, row: r, step: s }));
+      el.appendChild(row);
+    }
+  }
+}
+
 function refreshCell(c) {
   const s = +c.dataset.step;
   if (c.dataset.kind === "drum") {
     const v = pat().drums[c.dataset.track][s];
     c.classList.toggle("on", v > 0);
     c.classList.toggle("accent", v === 2);
+  } else {
+    c.classList.toggle("accent", pat()[c.dataset.track][s] === +c.dataset.row);
   }
+}
+
+function refreshColumn(track, s) {
+  $$(`.cell[data-track="${track}"][data-step="${s}"]`).forEach(refreshCell);
 }
 
 function refresh() {
@@ -73,14 +127,21 @@ function refresh() {
   $$("[data-level]").forEach((i) => (i.value = state.levels[i.dataset.level]));
   $("#bpm").value = state.bpm;
   $("#swing").value = state.swing;
+  $("#root").value = state.root;
+  $("#scale").value = state.scale;
   $("#cutoff").value = state.cutoff;
+  $("#delay").value = state.delay;
   $("#master").value = state.master;
 }
 
 function render() {
   renderDrums();
+  renderRolls();
   refresh();
 }
+
+$("#root").innerHTML = NOTE_NAMES.map((n, i) => `<option value="${i}">${n}</option>`).join("");
+$("#scale").innerHTML = Object.keys(SCALES).map((s) => `<option>${s}</option>`).join("");
 
 // --- painting steps --------------------------------------------------------
 let paint = null;
@@ -93,7 +154,8 @@ function startPaint(c, shift) {
     const value = shift ? (cur === 2 ? 0 : 2) : cur ? 0 : 1;
     return { kind, track, value };
   }
-  return null;
+  // Piano roll: one note per step. Clicking the lit note erases, otherwise draws.
+  return { kind, track, erase: pat()[track][s] === +c.dataset.row };
 }
 
 function applyPaint(c) {
@@ -101,12 +163,27 @@ function applyPaint(c) {
   if (paint.kind === "drum") {
     pat().drums[paint.track][s] = paint.value;
     refreshCell(c);
+    return;
   }
+  const notes = pat()[paint.track];
+  const row = +c.dataset.row;
+  if (paint.erase) {
+    if (notes[s] === row) notes[s] = -1;
+  } else {
+    notes[s] = row;
+  }
+  refreshColumn(paint.track, s);
 }
 
 function audition(c) {
   if (!Engine.ctx || playing) return;
-  if (c.dataset.kind === "drum" && paint.value) Engine.trigger(c.dataset.track, Engine.ctx.currentTime, 0.8);
+  const t = Engine.ctx.currentTime;
+  if (c.dataset.kind === "drum") {
+    if (paint.value) Engine.trigger(c.dataset.track, t, 0.8);
+  } else if (!paint.erase) {
+    const syn = SYNTHS.find((x) => x.id === c.dataset.track);
+    Engine[syn.id](t, degreeToMidi(+c.dataset.row, syn.octave), 0.2);
+  }
 }
 
 document.addEventListener("pointerdown", (e) => {
@@ -135,6 +212,8 @@ document.addEventListener("pointerup", () => {
 function applyMix() {
   Engine.setCutoff(state.cutoff);
   Engine.setMaster(state.master);
+  Engine.setDelay(state.delay);
+  Engine.setDelayTime(state.bpm);
   for (const id of Object.keys(state.levels)) Engine.setTrackLevel(id, state.muted[id] ? 0 : state.levels[id]);
 }
 
@@ -144,9 +223,19 @@ document.addEventListener("input", (e) => {
   else if (t.id === "bpm") state.bpm = Math.min(200, Math.max(60, +t.value || 120));
   else if (t.id === "swing") state.swing = +t.value;
   else if (t.id === "cutoff") state.cutoff = +t.value;
+  else if (t.id === "delay") state.delay = +t.value;
   else if (t.id === "master") state.master = +t.value;
   else return;
   applyMix();
+  changed();
+});
+
+document.addEventListener("change", (e) => {
+  if (e.target.id === "root") state.root = +e.target.value;
+  else if (e.target.id === "scale") state.scale = e.target.value;
+  else return;
+  renderRolls();
+  refresh();
   changed();
 });
 
@@ -175,6 +264,14 @@ function scheduleStep(s, t) {
   for (const d of DRUMS) {
     const v = p.drums[d.id][s];
     if (v) Engine.trigger(d.id, time, v === 2 ? 1 : 0.7);
+  }
+  for (const syn of SYNTHS) {
+    const deg = p[syn.id][s];
+    if (deg < 0) continue;
+    // Bass stays tight; a lead note rings into one empty step after it.
+    let len = 1;
+    while (s + len < STEPS && p[syn.id][s + len] === -1 && syn.id === "lead" && len < 2) len++;
+    Engine[syn.id](time, degreeToMidi(deg, syn.octave), stepDur() * len * 0.85);
   }
   visualQueue.push({ s, t: time });
 }
