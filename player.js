@@ -33,8 +33,57 @@ function editorReady() {
   });
 }
 
+// Read the tempo from setcpm(132/4) or setcpm(28) in the code being played.
+function songCpm(code) {
+  const m = code.match(/setcpm\(\s*([\d.]+)\s*(?:\/\s*([\d.]+))?\s*\)/);
+  if (!m) return null;
+  const v = +m[1] / (m[2] ? +m[2] : 1);
+  return Number.isFinite(v) && v > 0 ? v : null;
+}
+
+let startedAt = null;
+let cpm = null;
+
 function markLive(live) {
   document.querySelectorAll(".track").forEach((b) => b.classList.toggle("live", live && b.dataset.id === current?.id));
+  startedAt = live ? performance.now() : null;
+  cpm = live ? songCpm(repl.editor?.code || current?.code || "") : null;
+  tickBar();
+}
+
+function tickBar() {
+  const el = $("#bar");
+  if (!startedAt || !cpm) {
+    el.textContent = "";
+    return;
+  }
+  const bar = Math.floor(((performance.now() - startedAt) / 60000) * cpm) + 1;
+  el.textContent = `· bar ${String(bar).padStart(3, "0")}`;
+}
+setInterval(tickBar, 100);
+
+let allSongs = [];
+let playing = false;
+
+async function play() {
+  const editor = await editorReady();
+  await editor.evaluate();
+  playing = true;
+  markLive(true);
+}
+
+async function stop() {
+  const editor = await editorReady();
+  await editor.stop();
+  playing = false;
+  markLive(false);
+}
+
+function step(by) {
+  if (!allSongs.length) return;
+  const i = allSongs.indexOf(current);
+  const next = allSongs[(i + by + allSongs.length) % allSongs.length];
+  select(next, playing);
 }
 
 async function select(song, autoplay) {
@@ -47,12 +96,8 @@ async function select(song, autoplay) {
   document.body.dataset.theme = song.chapter.theme;
   document.querySelectorAll(".track").forEach((b) => b.classList.toggle("active", b.dataset.id === song.id));
   history.replaceState(null, "", "#" + song.id);
-  if (autoplay) {
-    await editor.evaluate();
-    markLive(true);
-  } else {
-    markLive(false);
-  }
+  if (autoplay) await play();
+  else markLive(false);
 }
 
 function renderList(songs) {
@@ -76,16 +121,22 @@ function renderList(songs) {
   });
 }
 
-$("#play").addEventListener("click", async () => {
-  const editor = await editorReady();
-  await editor.evaluate();
-  markLive(true);
-});
+$("#play").addEventListener("click", play);
+$("#stop").addEventListener("click", stop);
 
-$("#stop").addEventListener("click", async () => {
-  const editor = await editorReady();
-  await editor.stop();
-  markLive(false);
+// Keyboard: 1-9 pick a song, space plays or cuts, arrows step, R picks at random.
+// Ignored while typing in the code editor, which has its own Strudel shortcuts.
+document.addEventListener("keydown", (e) => {
+  if (e.target.closest?.(".cm-editor, input, textarea, select") || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (/^[1-9]$/.test(e.key) && allSongs[+e.key - 1]) select(allSongs[+e.key - 1], true);
+  else if (e.code === "Space") playing ? stop() : play();
+  else if (e.key === "ArrowDown" || e.key === "ArrowRight") step(1);
+  else if (e.key === "ArrowUp" || e.key === "ArrowLeft") step(-1);
+  else if (e.key.toLowerCase() === "r") {
+    const others = allSongs.filter((s) => s !== current);
+    select(others[Math.floor(Math.random() * others.length)], true);
+  } else return;
+  e.preventDefault();
 });
 
 // Open whatever is in the editor right now, including your edits.
@@ -111,6 +162,7 @@ setInterval(tickClock, 1000);
         return parse(entry, await res.text());
       }),
     );
+    allSongs = songs;
     renderList(songs);
     const fromHash = songs.find((s) => s.id === location.hash.slice(1));
     select(fromHash || songs[0], false);
