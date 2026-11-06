@@ -9,12 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="player.css" />
+  <script src="visuals.js"></script>
   <script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
 </head>
 <body>
+  <canvas id="field" aria-hidden="true"></canvas>
   <div class="scanlines" aria-hidden="true"></div>
 
   <header class="masthead">
+    <div>
     <p class="kicker">// intercepted transmissions · sector 7 · <span id="clock">--:--:--</span></p>
     <h1 class="glitch" data-text="LOOPFIELD">LOOPFIELD</h1>
     <p class="lede">
@@ -22,6 +25,8 @@
       an older age of fire and stone, and the frozen, drum-lit edges of the map.
       Pick one, transmit it, then rewrite it while it plays.
     </p>
+    </div>
+    <canvas id="scope" width="440" height="440" aria-hidden="true"></canvas>
   </header>
 
   <main class="layout">

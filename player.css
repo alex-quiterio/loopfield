@@ -183,3 +183,23 @@ kbd { border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; color: 
 @media (prefers-reduced-motion: reduce) {
   .glitch::before, .glitch::after, .track.live .num::after { animation: none; }
 }
+
+/* --- live visuals ------------------------------------------------------ */
+#field {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.masthead, .layout, .foot { position: relative; z-index: 1; }
+.masthead { display: flex; gap: 24px; align-items: center; justify-content: space-between; }
+#scope { flex: none; width: 220px; height: 220px; }
+.glitch { text-shadow: 0 0 calc(var(--pulse, 0) * 40px) var(--a1); }
+.deck { box-shadow: 0 0 calc(var(--pulse, 0) * 60px) color-mix(in srgb, var(--a1) 25%, transparent); }
+
+@media (max-width: 820px) {
+  .masthead { flex-direction: column-reverse; align-items: flex-start; }
+  #scope { width: 150px; height: 150px; align-self: flex-end; margin-bottom: -40px; }
+}
