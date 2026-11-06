@@ -1,0 +1,32 @@
+// SIGNAL LOST — glitch electro · 140 bpm · E phrygian
+// The last transmission from the outer districts, arriving in pieces.
+setcpm(140/4)
+
+stack(
+  // a broken break, re-sliced and bit-crushed every other bar
+  s("breaks125").splice(8, "0 1 [2 2] 3 <4 6> 5 [~ 6] 7")
+    .sometimesBy(.15, x => x.ply(2))
+    .crush("<16 8>").hpf(80).gain(.8),
+
+  // 808 punctuation
+  s("[bd ~ ~ bd] [~ ~ bd ~] [~ bd ~ ~] [~ ~ ~ ~]").bank("RolandTR808").gain(.9),
+  s("~ cb ~ ~ ~ cb ~ cb").bank("RolandTR808").hpf(800).gain(.25)
+    .delay(.3).delaytime(1/8).delayfeedback(.3),
+
+  // the signal: fm bleeps that lose more of themselves each bar
+  n("[0 ~ 3 ~] [5 ~ 3 1] [0 ~ ~ 7] [~ 5 <3 8> ~]").scale("E3:phrygian")
+    .s("sine").fm(sine.range(1, 8).slow(4)).fmh(2.01)
+    .decay(.12).sustain(0)
+    .delay(.35).delaytime(3/16).delayfeedback(.5).room(.4).gain(.35)
+    .degradeBy("<0 .1 .3 .6>"),
+
+  // the carrier: a growling square bass
+  n("0 ~ 0 [~ 0] ~ 1 ~ <3 -1>".add("<0 0 -2 1>/2")).scale("E1:phrygian")
+    .s("square").lpf(sine.range(200, 1400).slow(4)).lpq(8)
+    .decay(.15).sustain(.15).gain(.5),
+
+  // static between stations
+  s("white").hpf(4000).attack(.2).release(.5)
+    .gain(perlin.range(0, .06).fast(2))
+    .mask("<1 0 0 1>"),
+)
