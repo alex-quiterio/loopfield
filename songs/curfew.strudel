@@ -1,0 +1,27 @@
+// CURFEW — industrial techno · 132 bpm · F phrygian
+// The sirens start at bar 9. Stay indoors.
+setcpm(132/4)
+
+stack(
+  // pressure: a distorted kick that never stops
+  s("bd*4").bank("RolandTR909").distort(1.2).lpf(3000).gain(.9),
+
+  // patrol: metal on the offbeats, a nervous ride, claps that arrive late
+  s("[~ hh]*4").bank("RolandTR909").hpf(6000).gain(.55),
+  s("rd*8").bank("RolandTR909").gain(perlin.range(.08, .25)).pan(sine.range(.2, .8).slow(3)),
+  s("~ ~ ~ ~ cp ~ ~ ~ ~ ~ ~ ~ cp ~ ~ cp").bank("RolandTR909").room(.6).gain(.5),
+  s("rim(5,16,3)").bank("RolandTR909").gain(.35).pan(.7)
+    .delay(.5).delaytime(3/16).delayfeedback(.6),
+
+  // engine: a rolling acid bass on the offbeat sixteenths, filter opening over 16 bars
+  n("[~ 0 0 <0 1>]*4".add("<0 0 1 -2>/2")).scale("F1:phrygian")
+    .s("sawtooth").lpf(sine.range(250, 1800).slow(16)).lpq(14)
+    .decay(.1).sustain(0).distort(.6).gain(.7),
+
+  // sirens: supersaws sliding a half step apart, only in the second half
+  n("<[0,4] [1,5]>/2").scale("F3:phrygian")
+    .s("supersaw").attack(.5).release(1.5)
+    .lpf(sine.range(600, 3200).slow(8))
+    .room(.9).roomsize(6).gain(.22)
+    .mask("<0!8 1!8>"),
+)
