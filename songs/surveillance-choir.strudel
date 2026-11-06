@@ -9,11 +9,11 @@ stack(
   s("hh*16").bank("RolandTR808").gain("[.3 .1 .18 .1]*4").degradeBy(.2),
 
   // the choir: synthetic voices holding i, VI, iv, V
-  n("<[0,2,4] [-2,0,2] [-4,-2,0] [-3,-1,1]>").scale("C#3:harmonic minor")
+  n("<[0,2,4] [-2,0,2] [-4,-2,0] [-3,-1,1]>").scale("C#3:harmonic:minor")
     .s("gm_synth_choir").attack(.4).release(1.2).room(.9).gain(.45),
 
   // the scanner: an arpeggio sweeping the street, mirrored left and right
-  n("0 2 4 7 4 2 0 -1".fast(2).add("<0 -2 -4 -3>")).scale("C#4:harmonic minor")
+  n("0 2 4 7 4 2 0 -1".fast(2).add("<0 -2 -4 -3>")).scale("C#4:harmonic:minor")
     .s("square").lpf(sine.range(500, 3500).slow(8)).lpq(6)
     .decay(.12).sustain(0)
     .delay(.4).delaytime(3/16).delayfeedback(.4).gain(.28)
@@ -21,6 +21,6 @@ stack(
     .mask("<0!2 1!14>"),
 
   // the root, low and pulsing
-  n("<0 -2 -4 -3>").struct("x ~ ~ x ~ ~ x ~").scale("C#1:harmonic minor")
+  n("<0 -2 -4 -3>").struct("x ~ ~ x ~ ~ x ~").scale("C#1:harmonic:minor")
     .s("sawtooth").lpf(400).decay(.3).sustain(.3).gain(.6),
 )
