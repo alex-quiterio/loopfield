@@ -1,64 +1,66 @@
 # LOOPFIELD
 
-> // intercepted transmissions · sector 7 · cycle 2089
-
-Electronic music written as code. Every song here is a short program: drums, bass, chords and noise described as patterns that loop, mutate and decay while they play. Pick one, press play, and rewrite it while it runs.
+Albums of electronic music written as code. Every song is a short program: rhythms, harmonies, voices and noise described as patterns that loop, build and fall away while they play. Pick an album, press play, and rewrite any song while it runs.
 
 **▶ Listen and edit live: [alex-quiterio.github.io/loopfield](https://alex-quiterio.github.io/loopfield/)**
 
-## The transmissions
+## I · The Quixote Protocol
 
-### I · The city, 2089
+> *“The most important duty of our lives is to inspire one another.”*
 
-| # | Song | Style | Key | Signal |
+An album in six movements, about 37 minutes. It goes from a rocket's countdown to a piece of land by the sea: machines that dream, voices that agree, a sky full of starlings, giants that are only windmills, and hope as a thing you do. Each track is a full arrangement with intro, builds, breakdowns and an ending, and the player runs straight from one track into the next.
+
+| # | Track | Style | Length | |
 | --- | --- | --- | --- | --- |
-| 01 | [Curfew](songs/curfew.strudel) | industrial techno · 132 bpm | F phrygian | The sirens start at bar 9. Stay indoors. |
-| 02 | [The Arcology Sleeps](songs/arcology.strudel) | dark ambient · 84 bpm | D locrian | Eleven million people dreaming in a concrete hive. Something hums in the walls. |
-| 03 | [Surveillance Choir](songs/surveillance-choir.strudel) | darkwave · 108 bpm | C# harmonic minor | The city sings to you through every speaker. It knows your name. |
-| 04 | [Signal Lost](songs/signal-lost.strudel) | glitch electro · 140 bpm | E phrygian | The last transmission from the outer districts, arriving in pieces. |
+| 01 | [Poyekhali](songs/poyekhali.strudel) | hazy tape electronica · D major | 6:00 | 108 minutes around the Earth, and the first human to see all of it at once says only: let's go. |
+| 02 | [The Factory That Dreams](songs/the-factory-that-dreams.strudel) | melodic techno · A minor | 6:04 | Machines building machines, all night, until one of them closes its eyes and hears a lullaby. |
+| 03 | [One Honest Node](songs/one-honest-node.strudel) | meditative drone · D dorian | 6:00 | Many voices, each counting its own cycle. One of them lies. Slowly, the honest ones find each other. |
+| 04 | [Murmuration](songs/murmuration.strudel) | dusk folk electronica · E lydian | 6:06 | Ten thousand starlings, each one only watching its nearest neighbours, and the sky turns into one body. |
+| 05 | [Tilting at Windmills](songs/tilting-at-windmills.strudel) | devotional hijaz · E phrygian dominant | 6:24 | Everyone else sees windmills. He sees giants, and rides at them anyway, because someone has to believe first. |
+| 06 | [Active Hope](songs/active-hope.strudel) | post-rock piano · D major | 6:47 | The road ends at the sea, on a piece of land where something is finally planted. Hope is a thing you do. |
 
-### II · The old world
+## II · Transmissions from 2089
 
-| # | Song | Style | Key | Signal |
-| --- | --- | --- | --- | --- |
-| 05 | [The Long Road East](songs/the-long-road-east.strudel) | pastoral folk · 6/8 | D mixolydian | Green hills, a borrowed walking stick, and a road that goes on further than anyone meant to walk. |
-| 06 | [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) | dark choral · 64 bpm | D phrygian | Forges that have burned for a thousand years, and voices that remember why. |
-| 07 | [The Ember Crown](songs/the-ember-crown.strudel) | epic hybrid · 140 bpm | C minor | Banners on the ridge, a crown of fire on the horizon, and no road back. |
+Four signals recovered from a city that never sleeps: [Curfew](songs/curfew.strudel) (industrial techno), [The Arcology Sleeps](songs/arcology.strudel) (dark ambient), [Surveillance Choir](songs/surveillance-choir.strudel) (darkwave) and [Signal Lost](songs/signal-lost.strudel) (glitch electro).
 
-### III · The edges of the map
+## III · The Old World
 
-| # | Song | Style | Key | Signal |
-| --- | --- | --- | --- | --- |
-| 08 | [Polar Night Station](songs/polar-night-station.strudel) | arctic ambient · 72 bpm | E dorian | Seventy degrees north. The sun left in November. The instruments are still listening. |
-| 09 | [Red Earth Gathering](songs/red-earth-gathering.strudel) | tribal percussion · 118 bpm | A minor pentatonic | A fire in the middle, drums all around it, and a rhythm older than any city. |
+Fire, stone and a long road east: [The Long Road East](songs/the-long-road-east.strudel) (pastoral folk in 6/8), [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) (dark choral) and [The Ember Crown](songs/the-ember-crown.strudel) (epic hybrid).
+
+## IV · Edges of the Map
+
+Ice at one end of the world and drums at the other: [Polar Night Station](songs/polar-night-station.strudel) (arctic ambient) and [Red Earth Gathering](songs/red-earth-gathering.strudel) (tribal percussion).
 
 ## How the music is made
 
-The songs are written in [Strudel](https://strudel.cc), the JavaScript port of [TidalCycles](https://tidalcycles.org), a language built for live-coding music. A song is a `stack` of patterns, one per instrument:
+The songs are written in [Strudel](https://strudel.cc), the JavaScript port of [TidalCycles](https://tidalcycles.org), a language built for live-coding music. A short song is a `stack` of patterns, one per instrument. An album track names its parts and then arranges them over time:
 
 ```js
-setcpm(132/4)                                  // 132 bpm, one cycle per bar
+setcpm(88/4)                                            // 88 bpm, one cycle per bar
 
-stack(
-  s("bd*4").bank("RolandTR909").distort(1.2),  // four-on-the-floor 909 kick
-  n("[~ 0 0 <0 1>]*4").scale("F1:phrygian")    // offbeat acid bass in F phrygian
-    .s("sawtooth").lpf(sine.range(250, 1800).slow(16)).lpq(14),
+const chords = "<[d3,f#3,a3,c#4] [b2,d3,f#3,a3]>/2"     // two bars per chord
+const pad  = note(chords).s("gm_pad_warm").attack(1).release(2)
+const kick = s("bd ~ ~ ~ ~ ~ bd ~").bank("RolandTR808")
+
+arrange(
+  [16, pad],                // 16 bars of pad alone
+  [32, stack(pad, kick)],   // then the beat comes in
 )
 ```
 
 A few ideas do most of the work:
 
-- **Mini-notation.** `"bd*4"` is four kicks per bar, `"[~ hh]*4"` is offbeat hats, `"lt(3,8)"` is a Euclidean rhythm and `"<a b>"` alternates bar by bar.
-- **Scales, not notes.** Melodies are written as scale degrees (`n("0 2 4")`) and `.scale()` maps them to pitches, so a whole song changes mood by swapping one word.
-- **Continuous signals.** `sine`, `perlin` and `rand` modulate filters, volume and panning, which keeps a loop moving for minutes.
-- **Arrangement as pattern.** `.mask("<0!8 1!8>")` keeps a part silent for 8 bars and then lets it in. `.degradeBy()` makes it fall apart on purpose.
+- **Mini-notation.** `"bd*4"` is four kicks per bar, `"lt(3,8)"` is a Euclidean rhythm, `"{0 4 7}%8"` is a 3-step cycle over 8 steps and `"<a b>"` alternates bar by bar.
+- **Scales, not notes.** Melodies written as scale degrees (`n("0 2 4")`) are mapped by `.scale()`, so a whole song changes mood by swapping one word.
+- **Continuous signals.** `sine`, `perlin` and `rand` move filters, volume, panning and even pitch. Poyekhali's whole tape warble is one line, `perlin.range(-.18, .18)`.
+- **Arrangement as code.** `arrange()` lays sections end to end; `.mask()` and `.degradeBy()` bring parts in, thin them out or let them fall apart.
 
 ## The player
 
-- **Live editing.** Change any line and press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>; <kbd>Ctrl</kbd> + <kbd>.</kbd> stops. **Open in Strudel** sends your edited version to [strudel.cc](https://strudel.cc) to save or share.
-- **Visuals that listen.** A circular oscilloscope and a particle field (rain in the city, embers in the old world, snow at the edges) react to the audio itself, so they follow your edits too.
-- **A palette per chapter**, and a bar counter read from each song's tempo.
-- **Keys.** <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or stops, arrows step through, <kbd>R</kbd> picks one at random.
+- **Each album has its own world**, with its own palette, typefaces, title effect, button words, background (starlings, rain, embers or snow) and oscilloscope (orbit, ring, sun or aurora). All the visuals react to the audio itself, so they follow your edits too.
+- **Albums play through**, with a progress bar and the current bar of the arrangement.
+- **Live editing.** Change any line and press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>; <kbd>Ctrl</kbd> + <kbd>.</kbd> stops. **Open in Strudel** sends your edited version to [strudel.cc](https://strudel.cc).
+- **Keys.** <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or stops, arrows step through, <kbd>[</kbd> <kbd>]</kbd> change album, <kbd>R</kbd> picks one at random.
 
 ## Run it locally
 
@@ -69,13 +71,13 @@ python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-## Write your own transmission
+## Write your own
 
-1. Add `songs/<name>.strudel`. The first line is `// TITLE — style · bpm · key`, the second is a one-line story.
-2. Add `<name>` to a chapter in `CHAPTERS` at the top of `player.js`.
+1. Add `songs/<name>.strudel`. Line 1 is `// TITLE — style · bpm · key`, line 2 is a one-line story, and for an album track line 3 is `// <bars> bars · m:ss`.
+2. Add `<name>` to an album in `ALBUMS` at the top of `player.js`.
 
-Sounds available out of the box: the built-in synths (`sine`, `square`, `sawtooth`, `triangle`, `supersaw`, `white`, `pink`, `crackle`), the Tidal drum machines via `.bank()` (`RolandTR909`, `RolandTR808`, `LinnDrum` and more), General MIDI instruments (`gm_flute`, `gm_choir_aahs`, `gm_taiko_drum`…), and a few Dirt-Samples sets (`wind`, `metal`, `space`, `numbers`, `crow`).
+Sounds available out of the box: the built-in synths (`sine`, `square`, `sawtooth`, `triangle`, `supersaw`, `white`, `pink`, `crackle`), `piano`, the Tidal drum machines via `.bank()` (`RolandTR909`, `RolandTR808`, `LinnDrum` and more), General MIDI instruments (`gm_flute`, `gm_sitar`, `gm_choir_aahs`, `gm_seashore`…), and a few Dirt-Samples sets (`wind`, `metal`, `space`, `numbers`, `crow`, `insect`).
 
 ## Credits
 
-Built on [Strudel](https://strudel.cc) by Felix Roos, Alex McLean and contributors (AGPL-3.0), loaded from a CDN at runtime. Drum and instrument sounds come from the Tidal drum machines, General MIDI soundfonts and Dirt-Samples collections that Strudel loads.
+Built on [Strudel](https://strudel.cc) by Felix Roos, Alex McLean and contributors (AGPL-3.0), loaded from a CDN at runtime. Instrument and drum sounds come from the Tidal drum machines, General MIDI soundfonts, piano and Dirt-Samples collections that Strudel loads. All compositions are original.
