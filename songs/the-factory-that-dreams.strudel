@@ -1,0 +1,44 @@
+// THE FACTORY THAT DREAMS — melodic techno · 116 bpm · A minor
+// Machines building machines, all night, until one of them closes its eyes and hears a lullaby.
+// 176 bars · 6:04
+setcpm(116/4)
+
+// --- harmony: Am7, Fmaj7, Cmaj7, Em7, two bars each ---------------------------
+const chords = "<[a2,c3,e3,g3] [f2,a2,c3,e3] [c3,e3,g3,b3] [e2,g2,b2,d3]>/2"
+const roots = "<a1 f1 c2 e1>/2"
+
+// --- the machines --------------------------------------------------------------
+const press = s("bd*4").bank("RolandTR909").lpf(1800).gain(.85)
+const conveyor = s("hh*16").bank("RolandTR909").hpf(7000).gain("[.25 .08 .14 .08]*4")
+const welder = s("metal(5,16,1)").n("<0 2 5 7>").speed(1.2).hpf(1500)
+  .room(.4).pan(sine.slow(2)).gain(.18)
+const piston = s("rim(3,8,2)").bank("RolandTR909")
+  .delay(.4).delaytime(3/16).delayfeedback(.4).gain(.25)
+const clap = s("~ cp ~ cp").bank("RolandTR909").room(.5).gain(.35)
+const gears = note(roots).struct("[~ x x ~]*4").s("sawtooth")
+  .lpf(sine.range(300, 1100).slow(16)).lpq(6).decay(.12).sustain(.1).gain(.5)
+const thought = note(chords).arp("0 1 2 3 1 2 3 0".fast(2)).s("square")
+  .lpf(sine.range(600, 3000).slow(8)).decay(.09).sustain(0)
+  .delay(.35).delaytime(3/16).delayfeedback(.45).pan(sine.slow(4)).gain(.15)
+const breath = note(chords).s("supersaw").attack(.3).release(1).lpf(1800).room(.7)
+const chatter = s("numbers*8").n(irand(9)).speed(rand.range(.5, 1.5)).crush(6)
+  .degradeBy(.85).hpf(800).pan(rand).gain(.15)
+
+// --- the dream ---------------------------------------------------------------
+const lullaby = note("<[e5@3 d5] [c5@2 a4 ~] [g5@3 e5] [d5@4] [e5 ~ g5 a5] [c6@2 a5 ~] [b5@2 g5 e5] [e5@4]>")
+const musicbox = lullaby.s("gm_music_box").room(.8)
+  .delay(.4).delaytime(3/8).delayfeedback(.4).gain(.42)
+const dreamlead = lullaby.s("sawtooth").lpf(2000).attack(.05).release(1).room(.8).gain(.13)
+const strings = note(chords).s("gm_string_ensemble_2").attack(1).release(2).gain(.3)
+
+// --- the night shift -----------------------------------------------------------
+arrange(
+  [16, stack(press.lpf(400), conveyor.gain(.08), welder)],                                // power on
+  [32, stack(press, conveyor, welder, piston, gears)],                                   // assembly
+  [32, stack(press, conveyor, welder, piston, gears, clap, thought,
+             breath.gain("[.04 .1 .14 .14]*4"), chatter)],                               // the line runs
+  [24, stack(breath.gain(.11), musicbox, strings, welder.slow(2), gears.lpf(400).gain(.3))], // a machine closes its eyes
+  [56, stack(press, conveyor, welder, piston, gears, clap, thought,
+             breath.gain("[.04 .1 .14 .14]*4"), musicbox, dreamlead, strings)],           // the factory dreams
+  [16, stack(musicbox, strings, press.lpf(300).gain(.6), chatter)],                      // the shift ends
+)
