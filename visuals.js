@@ -360,6 +360,9 @@
       }
     }
 
+    // switch visuals the moment the album changes, not on the next poll
+    new MutationObserver(readTheme).observe(document.body, { attributes: true, attributeFilter: ["data-album"] });
+
     function loop(t) {
       if (frame++ % 20 === 0) readTheme();
       listen();

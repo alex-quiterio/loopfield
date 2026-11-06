@@ -136,7 +136,7 @@ body[data-album="city"] .scanlines { display: block; }
   color: var(--a3);
 }
 
-.title {
+.headline {
   position: relative;
   margin: 8px 0 0;
   font-family: var(--display);
@@ -149,16 +149,16 @@ body[data-album="city"] .scanlines { display: block; }
 }
 
 /* the city tears its own name apart */
-body[data-album="city"] .title::before,
-body[data-album="city"] .title::after {
+body[data-album="city"] .headline::before,
+body[data-album="city"] .headline::after {
   content: attr(data-text);
   position: absolute;
   inset: 0;
   overflow: hidden;
   mix-blend-mode: screen;
 }
-body[data-album="city"] .title::before { color: var(--a1); transform: translate(-3px, 0); animation: tear 3.2s infinite steps(1); }
-body[data-album="city"] .title::after { color: var(--a2); transform: translate(3px, 0); animation: tear 2.7s infinite reverse steps(1); }
+body[data-album="city"] .headline::before { color: var(--a1); transform: translate(-3px, 0); animation: tear 3.2s infinite steps(1); }
+body[data-album="city"] .headline::after { color: var(--a2); transform: translate(3px, 0); animation: tear 2.7s infinite reverse steps(1); }
 @keyframes tear {
   0%, 86%, 100% { clip-path: inset(0 0 100% 0); }
   88% { clip-path: inset(12% 0 62% 0); transform: translate(-6px, 0); }
@@ -167,7 +167,7 @@ body[data-album="city"] .title::after { color: var(--a2); transform: translate(3
 }
 
 /* the old world is carved in gold */
-body[data-album="old"] .title {
+body[data-album="old"] .headline {
   background: linear-gradient(180deg, var(--a3), var(--a1) 55%, #8a5a1c);
   -webkit-background-clip: text;
   background-clip: text;
@@ -175,13 +175,13 @@ body[data-album="old"] .title {
 }
 
 /* the edges of the map are frost */
-body[data-album="edge"] .title {
+body[data-album="edge"] .headline {
   color: var(--a3);
   text-shadow: 0 0 24px color-mix(in srgb, var(--a1) 45%, transparent), 0 0 calc(var(--pulse, 0) * 40px) var(--a1);
 }
 
 /* the album shimmers from night into dawn */
-body[data-album="quixote"] .title {
+body[data-album="quixote"] .headline {
   font-style: italic;
   background: linear-gradient(100deg, var(--a2), var(--a3) 35%, var(--a1) 50%, var(--a3) 65%, var(--a2));
   background-size: 300% 100%;
@@ -333,5 +333,5 @@ kbd { border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; color: 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title, .title::before, .title::after, .track.live .num::after { animation: none !important; }
+  .headline, .headline::before, .headline::after, .track.live .num::after { animation: none !important; }
 }
