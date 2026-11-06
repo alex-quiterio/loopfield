@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>loopfield</title>
+  <meta name="description" content="Dystopian electronic music written as code with Strudel." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="player.css" />
+  <script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <p class="kicker">// intercepted transmissions · sector 7 · <span id="clock">--:--:--</span></p>
+    <h1 class="glitch" data-text="LOOPFIELD">LOOPFIELD</h1>
+    <p class="lede">
+      Electronic music written as code. Four signals recovered from a city that never sleeps.
+      Pick one, transmit it, then rewrite it while it plays.
+    </p>
+  </header>
+
+  <main class="layout">
+    <nav id="tracks" class="tracks" aria-label="Songs"></nav>
+
+    <section class="deck">
+      <div class="deck-head">
+        <div>
+          <p class="label">now decoding</p>
+          <h2 id="now">awaiting signal</h2>
+          <p id="meta" class="meta"></p>
+          <p id="blurb" class="blurb"></p>
+        </div>
+        <div class="controls">
+          <button id="play" class="btn hot">▶ transmit</button>
+          <button id="stop" class="btn">■ cut</button>
+          <a id="open" class="btn" target="_blank" rel="noopener">open in strudel ↗</a>
+        </div>
+      </div>
+
+      <div id="editor-host" class="editor-host">
+        <strudel-editor id="repl" code="// choose a transmission"></strudel-editor>
+      </div>
+
+      <p class="hint">
+        Edit any line, then press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to re-transmit.
+        <kbd>Ctrl</kbd> + <kbd>.</kbd> cuts the signal.
+      </p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Written in <a href="https://strudel.cc">Strudel</a>, the JavaScript port of TidalCycles.
+    Also on this frequency: <a href="sequencer/">a step sequencer synthesised from scratch with the Web Audio API</a>.
+  </footer>
+
+  <script src="player.js"></script>
+</body>
+</html>
