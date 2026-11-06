@@ -1,0 +1,31 @@
+// THE LONG ROAD EAST — pastoral folk · 6/8 · D mixolydian
+// Green hills, a borrowed walking stick, and a road that goes on further than anyone meant to walk.
+setcpm(28) // one cycle is one bar of 6/8
+
+stack(
+  // the walking song: flute enters at bar 9, question then answer
+  n(`<
+    [0 ~ 2 4 ~ 3] [2 ~ 1 0 ~ ~]
+    [0 ~ 2 4 ~ 5] [7 ~ 6 4 ~ ~]
+    [5 ~ 4 3 ~ 2] [1 ~ 2 4 ~ ~]
+    [3 ~ 2 1 ~ -1] [0 ~ ~ ~ ~ ~]
+  >`).scale("D5:mixolydian")
+    .s("gm_flute").clip(1.8).room(.6).gain(.7)
+    .mask("<0!8 1!8>"),
+
+  // harp rolling through I, bVII, IV and v
+  n("[0 2 4 7 4 2]".add("<0 0 0 -1 3 4 -1 0>")).scale("D3:mixolydian")
+    .s("gm_orchestral_harp").room(.5).gain(.55),
+
+  // strings, warm and far away
+  n("[0,2,4]".add("<0 0 0 -1 3 4 -1 0>")).scale("D3:mixolydian")
+    .s("gm_string_ensemble_1").attack(.5).release(1).gain(.35),
+
+  // plucked low strings on the dotted beats
+  n("<0 0 0 -1 3 4 -1 0>").struct("x ~ ~ x ~ ~").scale("D2:mixolydian")
+    .s("gm_pizzicato_strings").gain(.6),
+
+  // a frame drum and a shaker, like boots on a dirt road
+  note("d2 ~ ~ [d2 d2] ~ ~").s("gm_taiko_drum").gain(.3).room(.4),
+  s("sh*6").bank("LinnDrum").gain("[.22 .08 .14 .22 .08 .14]"),
+)
