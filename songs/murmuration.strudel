@@ -1,0 +1,43 @@
+// MURMURATION — dusk folk electronica · 84 bpm · E lydian
+// Ten thousand starlings, each one only watching its seven nearest neighbours, and the sky turns into one body.
+// 128 bars · 6:06
+setcpm(84/4)
+
+// --- harmony: Emaj7, F#/E, C#m7, Amaj7, two bars each ----------------------------
+const chords = "<[e3,g#3,b3,d#4] [f#3,a#3,c#4,e4] [c#3,e3,g#3,b3] [a2,c#3,e3,g#3]>/2"
+const roots = "<e2 f#2 c#2 a1>/2"
+
+// --- the field at dusk -----------------------------------------------------------
+const wind = s("wind").n("<0 2 5 8>").slow(4).speed(.6).lpf(2200).room(1).gain(.28)
+const birds = note("<c6 e6 a6 g6>(3,16,<0 5 9>)").s("gm_bird_tweet")
+  .degradeBy(.5).pan(rand).room(.6).gain(.14)
+const guitar = note(chords).arp("0 2 1 3 2 1 3 2").s("gm_acoustic_guitar_nylon")
+  .room(.5).gain(.55)
+
+// the flock: one simple phrase, played by many birds, each a little early or late
+const phrase = n("0 2 4 6 7 6 4 2".fast(2).add("<0 1 -2 -4>/2")).scale("E5:lydian")
+const flock = (density) => stack(
+  phrase.s("gm_celesta").degradeBy(density).pan(rand).gain(.24),
+  phrase.s("gm_glockenspiel").late(1/32).degradeBy(density + .1).pan(rand).gain(.12),
+  phrase.add(note(-12)).s("gm_marimba").late(1/16).degradeBy(density).pan(rand).gain(.18),
+).delay(.3).delaytime(3/16).delayfeedback(.35).room(.6)
+
+const voice = note("<[g#4@3 f#4] [e4@4] [a#4@2 g#4 f#4] [e4@4] [g#4 ~ b4 c#5] [b4@4] [a4@2 g#4 e4] [e4@4]>")
+  .s("gm_voice_oohs").attack(.2).release(1.2).room(.9).roomsize(6).gain(.4)
+const strings = note(chords).s("gm_string_ensemble_1").attack(1.5).release(2.5).gain(.3)
+const bass = note(roots).struct("x ~ ~ ~ ~ ~ x ~").s("gm_acoustic_bass").gain(.55)
+const pulse = stack(
+  s("bd ~ ~ ~ ~ ~ ~ ~ ~ ~ bd ~ ~ ~ ~ ~").bank("LinnDrum").lpf(800).gain(.6),
+  s("~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ rim ~ ~ ~").bank("LinnDrum").room(.5).gain(.3),
+  s("sh*16").bank("LinnDrum").gain(perlin.range(.04, .18)),
+)
+
+// --- one evening --------------------------------------------------------------
+arrange(
+  [16, stack(wind, guitar, birds)],                                            // dusk
+  [16, stack(wind, guitar, birds, flock(.8))],                                 // the first birds
+  [24, stack(guitar, flock(.6), bass, pulse, strings.gain(.2))],               // gathering
+  [32, stack(guitar, flock(.2), bass, pulse, strings, voice)],                 // the flock turns as one
+  [16, stack(wind, guitar, flock(.85), birds)],                                // scatter
+  [24, stack(wind, guitar, strings, voice.gain(.25), birds)],                  // roost
+)
