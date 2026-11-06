@@ -1,0 +1,29 @@
+// THE ARCOLOGY SLEEPS — dark ambient · 84 bpm · D locrian
+// Eleven million people dreaming in a concrete hive. Something hums in the walls.
+setcpm(84/4)
+
+stack(
+  // the hum: a sub drone that breathes
+  note("d1").slow(2).s("sine").attack(2).release(4)
+    .gain(sine.range(.4, .8).slow(8)),
+
+  // the walls: metallic pads drifting through unresolved clusters
+  n("<[0,3,6] [-1,2,5] [0,2,6] [-2,1,4]>/2").scale("D2:locrian")
+    .s("gm_pad_metallic").attack(1.5).release(3)
+    .lpf(1800).room(1).roomsize(8).gain(.55),
+
+  // surveillance: sparse data blips, scattered in stereo, mostly missing
+  n("0 ~ [3 5] ~ ~ 7 ~ ~".fast(2)).scale("D5:locrian")
+    .s("square").decay(.04).sustain(0).crush(6).degradeBy(.6)
+    .pan(rand).delay(.6).delaytime(1/6).delayfeedback(.55).gain(.18),
+
+  // heartbeat of the machine
+  s("bd ~ ~ ~ ~ ~ bd ~").bank("RolandTR808").lpf(500).room(.4).gain(.9),
+  s("~ ~ ~ ~ ~ ~ ~ [~ hh]").bank("RolandTR808").room(.8).gain(.25),
+
+  // distant voices, every other four bars
+  n("<~ 4 ~ [2 1]>").scale("D4:locrian")
+    .s("gm_choir_aahs").attack(.8).release(2)
+    .room(1).roomsize(8).gain(.3)
+    .mask("<0!4 1!4>"),
+)
