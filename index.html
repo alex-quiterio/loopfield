@@ -4,30 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>loopfield</title>
-  <meta name="description" content="Dystopian electronic music written as code with Strudel." />
+  <meta name="description" content="Albums of electronic music written as code with Strudel." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="player.css" />
   <script src="visuals.js"></script>
   <script src="https://unpkg.com/@strudel/repl@1.1.0/dist/index.js"></script>
 </head>
-<body>
+<body data-album="quixote">
   <canvas id="field" aria-hidden="true"></canvas>
   <div class="scanlines" aria-hidden="true"></div>
 
   <header class="masthead">
-    <div>
-    <p class="kicker">// intercepted transmissions · sector 7 · <span id="clock">--:--:--</span></p>
-    <h1 class="glitch" data-text="LOOPFIELD">LOOPFIELD</h1>
-    <p class="lede">
-      Electronic music written as code. Signals recovered from three worlds: a city that never sleeps,
-      an older age of fire and stone, and the frozen, drum-lit edges of the map.
-      Pick one, transmit it, then rewrite it while it plays.
-    </p>
+    <div class="masthead-text">
+      <p class="kicker"><span class="brand">loopfield</span> <span id="kicker-text"></span> · <span id="clock">--:--:--</span></p>
+      <h1 id="title" class="title" data-text="">&nbsp;</h1>
+      <p id="lede" class="lede"></p>
+      <p id="epigraph" class="epigraph" hidden></p>
     </div>
     <canvas id="scope" width="440" height="440" aria-hidden="true"></canvas>
   </header>
+
+  <nav id="albums" class="albums" aria-label="Albums"></nav>
 
   <main class="layout">
     <nav id="tracks" class="tracks" aria-label="Songs"></nav>
@@ -35,27 +34,29 @@
     <section class="deck">
       <div class="deck-head">
         <div>
-          <p class="label">now decoding <span id="bar"></span></p>
+          <p class="label"><span id="label-text">now playing</span> <span id="bar"></span></p>
           <h2 id="now">awaiting signal</h2>
           <p id="meta" class="meta"></p>
           <p id="blurb" class="blurb"></p>
         </div>
         <div class="controls">
-          <button id="play" class="btn hot">▶ transmit</button>
-          <button id="stop" class="btn">■ cut</button>
+          <button id="play" class="btn hot">▶ play</button>
+          <button id="stop" class="btn">■ stop</button>
           <a id="open" class="btn" target="_blank" rel="noopener">open in strudel ↗</a>
         </div>
       </div>
 
+      <div class="progress" aria-hidden="true"><div id="progress-fill"></div></div>
+      <p id="time" class="time"></p>
+
       <div id="editor-host" class="editor-host">
-        <strudel-editor id="repl" code="// choose a transmission"></strudel-editor>
+        <strudel-editor id="repl" code="// choose a song"></strudel-editor>
       </div>
 
       <p class="hint">
-        Edit any line, then press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to re-transmit.
-        <kbd>Ctrl</kbd> + <kbd>.</kbd> cuts the signal.
-        Outside the editor: <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or cuts,
-        <kbd>←</kbd> <kbd>→</kbd> step through, <kbd>R</kbd> tunes to a random frequency.
+        Edit any line, then press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to hear it. <kbd>Ctrl</kbd> + <kbd>.</kbd> stops.
+        Outside the editor: <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or stops,
+        <kbd>←</kbd> <kbd>→</kbd> step through, <kbd>[</kbd> <kbd>]</kbd> change album, <kbd>R</kbd> picks one at random.
       </p>
     </section>
   </main>
