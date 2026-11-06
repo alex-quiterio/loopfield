@@ -1,0 +1,54 @@
+// ONE HONEST NODE — meditative drone · 72 bpm · D dorian
+// Many voices, each counting its own cycle. One of them lies. Slowly, the honest ones find each other.
+// 108 bars · 6:00
+setcpm(72/4)
+
+// --- the ground: a low chant on D and A, breathing through a vowel ------------
+const drone = stack(
+  note("[d2,a2]").s("sawtooth").vowel("o").lpf(700).attack(3).release(4)
+    .gain(perlin.range(.12, .22).slow(6)),
+  note("d1").s("sine").attack(3).release(4).gain(.4),
+  note("[d3,a3]").s("gm_choir_aahs").attack(3).release(4).room(1).roomsize(10).gain(.18),
+)
+
+// singing bowls: two sines a breath apart, so they beat against each other
+const bowl = (pat) => stack(
+  note(pat).s("sine").release(6),
+  note(pat).add(note(.07)).s("sine").release(6),
+).room(1).roomsize(10).gain(.12)
+const bowls = bowl("<d5 ~ a4 ~ [~ e5] ~ ~ ~ f5 ~ ~ ~ a5 ~ ~ ~>")
+
+// --- the nodes: three cycles of 3, 5 and 7 steps that never quite line up ---------
+const nodeA = n("{0 4 7}%8").scale("D4:dorian").s("gm_kalimba").room(.6).gain(.32)
+const nodeB = n("{2 4 7 9 4}%8").scale("D4:dorian").s("gm_celesta").room(.6).pan(.3).gain(.25)
+const nodeC = n("{-1 0 4 7 11 9 7}%8").scale("D4:dorian").s("gm_vibraphone").room(.6).pan(.7).gain(.25)
+const liar = n("{1 5 8 3}%8").scale("D4:dorian").add(note(perlin.range(-.4, .4)))
+  .s("square").crush(5).lpf(1200).degradeBy(.4).pan(rand).gain(.12)
+
+// finality: every honest voice in the same cycle, in octaves
+const agreement = "{0 4 7 9 11 9 7 4}%8"
+const consensus = stack(
+  n(agreement).scale("D4:dorian").s("gm_kalimba").gain(.3),
+  n(agreement).scale("D5:dorian").s("gm_celesta").gain(.22),
+  n(agreement).scale("D3:dorian").s("gm_vibraphone").gain(.25),
+).room(.8).roomsize(6)
+
+const strings = n("<[0,4,9] [0,3,7] [-2,2,7] [0,4,7]>/2").scale("D3:dorian")
+  .s("gm_string_ensemble_1").attack(2).release(3).gain(.28)
+const doubt = n("<[1,4,8] [0,3,8]>/2").scale("D3:dorian")
+  .s("gm_string_ensemble_1").attack(2).release(3).gain(.28)
+const heartbeat = stack(
+  s("bd ~ ~ ~ ~ ~ ~ ~ bd ~ ~ ~ ~ ~ ~ ~").bank("RolandTR808").lpf(200).gain(.7),
+  s("sh*8").bank("LinnDrum").gain(perlin.range(.03, .12)),
+)
+
+// --- the protocol --------------------------------------------------------------
+arrange(
+  [12, stack(drone, bowls)],                                                   // genesis
+  [16, stack(drone, bowls, nodeA, heartbeat)],                                 // first peers
+  [20, stack(drone, nodeA, nodeB, nodeC, heartbeat, strings.gain(.18))],       // gossip
+  [16, stack(drone, nodeA, nodeB, nodeC, liar, heartbeat, doubt)],             // the byzantine node
+  [12, stack(drone, bowls, liar.degradeBy(.7), doubt.gain(.15))],              // a fork in the chain
+  [24, stack(drone, consensus, strings, heartbeat, bowls)],                    // finality
+  [8, stack(drone, bowls)],                                                    // settlement
+)
