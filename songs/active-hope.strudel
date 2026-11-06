@@ -1,0 +1,46 @@
+// ACTIVE HOPE — post-rock piano · 92 bpm · D major
+// The road ends at the sea, on a piece of land where something is finally planted. Hope is a thing you do.
+// 156 bars · 6:47
+setcpm(92/4)
+
+// --- harmony: D, A/C#, Bm, G, two bars each ---------------------------------------
+const chords = "<[d3,f#3,a3] [c#3,e3,a3] [b2,d3,f#3] [g2,b2,d3]>/2"
+const roots = "<d2 c#2 b1 g1>/2"
+
+// --- the coast ---------------------------------------------------------------------
+const sea = note("c4").slow(2).s("gm_seashore").room(.6).gain(.25)
+const birds = note("<e6 g6 b6 d7>(3,16,<0 6 11>)").s("gm_bird_tweet")
+  .degradeBy(.5).pan(rand).room(.6).gain(.13)
+
+// --- the piano, and the song it keeps returning to -----------------------------------
+const pianoChords = note(chords).s("piano").struct("x ~ ~ x ~ ~ x ~").room(.6).gain(.45)
+const song = note("<[a4@3 f#4] [d5@3 c#5] [e5@3 a4] [a4@4] [f#4 ~ a4 b4] [d5@3 c#5] [b4@2 a4 g4] [f#4@4]>")
+const piano = song.s("piano").room(.7).gain(.55)
+const cello = note(roots).s("gm_cello").attack(.3).release(1).room(.6).gain(.45)
+const strings = note(chords).s("gm_string_ensemble_1").attack(1).release(2).room(.7).gain(.32)
+const choir = note(chords).add(note(12)).s("gm_choir_aahs").attack(.8).release(2).room(1).gain(.3)
+
+// --- the swell -----------------------------------------------------------------------
+const tremolo = note(chords).add(note(12)).s("gm_electric_guitar_clean").struct("x*16")
+  .room(.8).delay(.4).delaytime(3/16).delayfeedback(.4)
+const kick = s("bd ~ ~ ~ ~ ~ bd ~ bd ~ ~ ~ ~ ~ ~ ~").bank("LinnDrum").lpf(2500).gain(.85)
+const snare = s("~ ~ ~ ~ sd ~ ~ ~").bank("LinnDrum").room(.9).roomsize(6).gain(.55)
+const shaker = s("sh*16").bank("LinnDrum").gain(perlin.range(.05, .2))
+const crash = s("<cr ~ ~ ~ ~ ~ ~ ~>").bank("LinnDrum").room(.8).gain(.3)
+const anthem = stack(
+  song.add(note(12)).s("supersaw").attack(.05).release(.8).lpf(3500).room(.8).gain(.16),
+  song.s("gm_string_ensemble_1").attack(.1).release(1).gain(.35),
+)
+
+// --- the way home ----------------------------------------------------------------------
+arrange(
+  [16, stack(sea, birds, pianoChords.degradeBy(.4))],                                    // dawn over the land
+  [24, stack(sea, pianoChords, piano, cello)],                                           // the long road home
+  [24, stack(pianoChords, piano, cello, strings, kick.gain(.5), shaker,
+             tremolo.gain(.08))],                                                        // what we plant
+  [24, stack(pianoChords, piano, cello, strings, kick, snare, shaker, crash,
+             tremolo.gain(.16), choir)],                                                 // rising
+  [44, stack(pianoChords, piano, cello, strings, kick, snare, shaker, crash,
+             tremolo.gain(.2), choir, anthem)],                                          // active hope
+  [24, stack(sea, birds, piano, strings.gain(.18))],                                     // gratitude
+)
