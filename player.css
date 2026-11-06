@@ -206,9 +206,10 @@ body[data-album="quixote"] .headline {
 .album {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0 10px;
+  gap: 0 12px;
+  align-content: center;
   text-align: left;
-  padding: 12px 14px;
+  padding: 10px;
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line);
@@ -219,11 +220,18 @@ body[data-album="quixote"] .headline {
   transition: border-color 0.2s, transform 0.2s;
 }
 .album:hover { transform: translateY(-2px); border-color: var(--dim); }
-.album-num { grid-row: span 2; color: var(--dim); font-family: "Cinzel", serif; font-weight: 700; padding-top: 1px; }
+.album-cover {
+  grid-row: span 2;
+  width: 52px;
+  height: 52px;
+  border-radius: calc(var(--radius) * 0.6);
+  border: 1px solid var(--line);
+  display: block;
+}
 .album-title { font-weight: 500; }
 .album-sub { color: var(--dim); font-size: 12px; }
 .album.active { border-color: var(--a1); box-shadow: 0 0 28px color-mix(in srgb, var(--a1) 18%, transparent); }
-.album.active .album-num { color: var(--a1); }
+.album.active .album-cover { border-color: var(--a1); }
 
 /* --- layout ----------------------------------------------------------- */
 .layout {

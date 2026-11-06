@@ -105,8 +105,9 @@ function renderAlbums() {
     const b = document.createElement("button");
     b.className = "album";
     b.dataset.id = a.id;
-    b.innerHTML = `<span class="album-num"></span><span class="album-title"></span><span class="album-sub"></span>`;
-    b.querySelector(".album-num").textContent = ["I", "II", "III", "IV"][i] || i + 1;
+    b.innerHTML = `<img class="album-cover" alt="" /><span class="album-title"></span><span class="album-sub"></span>`;
+    b.querySelector(".album-cover").src = `art/covers/${a.id}.svg`;
+    b.querySelector(".album-cover").alt = `${["I", "II", "III", "IV"][i] || i + 1} · ${a.title} cover`;
     b.querySelector(".album-title").textContent = a.title;
     const list = songsOf(a.id);
     b.querySelector(".album-sub").textContent = `${list.length} tracks${albumLength(list)}`;
