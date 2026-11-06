@@ -1,0 +1,27 @@
+// HALLS UNDER THE MOUNTAIN — dark choral · 64 bpm · D phrygian
+// Deep in the stone, forges that have burned for a thousand years, and voices that remember why.
+setcpm(64/4)
+
+stack(
+  // the anvil: low drums, and a hammer ringing off the walls
+  note("d1 ~ ~ d1 ~ ~ d1 ~").s("gm_taiko_drum").room(.7).gain(.9),
+  note("~ ~ d2 ~").s("gm_timpani").room(.6).gain(.6),
+  s("~ metal ~ ~ ~ metal ~ [~ metal]").n("<0 3>").speed(.5)
+    .room(.8).roomsize(6).gain(.3),
+
+  // the old voices: a low choir in open fifths, moving like stone
+  n("<[0,4,7] [0,4,7] [1,5,8] [-1,3,6]>").scale("D2:phrygian")
+    .s("gm_choir_aahs").attack(1).release(2).room(1).roomsize(8).gain(.6),
+
+  // a horn carrying the lament, from bar 5
+  n("<[0@3 1] [3@2 1 0] [1@3 3] [-1@3 ~]>").scale("D3:phrygian")
+    .s("gm_french_horn").attack(.1).release(1).room(.8).gain(.5)
+    .mask("<0!4 1!12>"),
+
+  // the mountain itself
+  n("<0 0 1 -1>").scale("D1:phrygian").s("gm_tuba").release(1).gain(.6),
+  note("d1").slow(2).s("sine").attack(2).release(3).gain(.35),
+
+  // embers drifting up the shafts
+  s("space").n("<0 4 8 12>").slow(2).speed(.25).room(1).gain(.25),
+)
