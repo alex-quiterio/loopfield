@@ -312,6 +312,9 @@ body[data-album="quixote"] .deck h2 { font-size: 34px; font-style: italic; }
 .btn.hot:hover { background: var(--a1); color: var(--bg); }
 
 .progress { height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; }
+/* album tracks can be scrubbed: a taller target around the same thin line */
+.progress.seekable { box-sizing: content-box; padding: 9px 0; margin: -9px 0; background-clip: content-box; cursor: pointer; }
+.progress.seekable:hover { background-color: var(--dim); }
 #progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--a2), var(--a1)); transition: width 0.1s linear; }
 .time { margin: 6px 0 12px; color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; min-height: 1.6em; }
 

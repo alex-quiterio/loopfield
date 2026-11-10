@@ -23,7 +23,7 @@ const ALBUMS = [
     kicker: "~ songs from before the machines ~",
     lede: "Fire, stone and a long road east. Flutes on green hills, voices under the mountain, and a crown burning on the horizon.",
     words: { play: "▶ begin", stop: "■ rest", label: "now telling" },
-    songs: ["the-long-road-east", "halls-under-the-mountain", "the-ember-crown"],
+    songs: ["the-long-road-east", "halls-under-the-mountain", "lament-for-two-strings", "the-ember-crown"],
   },
   {
     id: "edge",
@@ -45,6 +45,9 @@ let playing = false;
 let startedAt = null;
 let cpm = null;
 let advancing = false;
+let offset = 0; // the bar the song was at when the clock last (re)started; moved by seeking
+let shift = 0; // how far the pattern is slid against Strudel's own cycle count
+let pattern = null; // the song as last evaluated, before sliding
 
 // Header lines: "// TITLE — meta", "// blurb", and for album tracks "// 132 bars · 6:00".
 function parse(id, albumId, code) {
@@ -92,9 +95,23 @@ function songCpm(code) {
 
 function editorReady() {
   return new Promise((resolve) => {
-    const check = () => (repl.editor ? resolve(repl.editor) : setTimeout(check, 50));
+    const check = () => (repl.editor ? resolve(hook(repl.editor)) : setTimeout(check, 50));
     check();
   });
+}
+
+// Strudel always counts cycles from zero, so to move through a song the pattern itself
+// is slid in time. Every pattern on its way to the scheduler passes through here.
+function hook(editor) {
+  const scheduler = editor.repl?.scheduler;
+  if (!scheduler || scheduler.loopfield) return editor;
+  const set = scheduler.setPattern.bind(scheduler);
+  scheduler.setPattern = (pat, autostart) => {
+    pattern = pat;
+    return set(shift ? pat.early(shift) : pat, autostart);
+  };
+  scheduler.loopfield = true;
+  return editor;
 }
 
 // --- albums ------------------------------------------------------------------
@@ -166,11 +183,13 @@ async function select(song, autoplay) {
   const editor = await editorReady();
   // Arrangements count bars from the moment playback starts, so restart the clock.
   if (autoplay && playing) await editor.stop();
+  offset = shift = 0;
   current = song;
   editor.setCode(song.code);
   $("#now").textContent = song.title;
   $("#meta").textContent = song.meta + (song.length ? ` · ${song.length}` : "");
   $("#blurb").textContent = song.blurb;
+  $("#progress").classList.toggle("seekable", !!song.bars);
   history.replaceState(null, "", "#" + song.id);
   if (autoplay) await start();
   else markTracks();
@@ -178,6 +197,7 @@ async function select(song, autoplay) {
 
 async function start() {
   const editor = await editorReady();
+  shift = offset; // the scheduler starts from cycle zero
   await editor.evaluate();
   playing = true;
   startedAt = performance.now();
@@ -198,8 +218,24 @@ async function stop() {
   await editor.stop();
   playing = false;
   startedAt = null;
+  offset = shift = 0;
   markTracks();
 }
+
+// Jump to a bar of an album track. Whole bars only, so every part comes back in on the beat.
+async function seek(bar) {
+  if (!current?.bars) return;
+  const editor = await editorReady();
+  offset = Math.max(0, Math.min(current.bars - 1, Math.floor(bar)));
+  if (!playing) return start();
+  const scheduler = editor.repl?.scheduler;
+  if (!scheduler || !pattern) return;
+  shift = offset - scheduler.now();
+  startedAt = performance.now();
+  scheduler.setPattern(pattern);
+}
+
+const position = () => offset + ((performance.now() - startedAt) / 60000) * cpm;
 
 function tick() {
   const fill = $("#progress-fill");
@@ -209,8 +245,8 @@ function tick() {
     fill.style.width = "0%";
     return;
   }
-  const secs = (performance.now() - startedAt) / 1000;
-  const bars = (secs / 60) * cpm;
+  const bars = position();
+  const secs = (bars / cpm) * 60;
   $("#bar").textContent = `· bar ${String(Math.floor(bars) + 1).padStart(3, "0")}${current.bars ? " / " + current.bars : ""}`;
   if (!current.bars) {
     $("#time").textContent = fmt(secs);
@@ -242,6 +278,11 @@ function stepAlbum(by) {
 }
 
 $("#play").addEventListener("click", play);
+$("#progress").addEventListener("click", (e) => {
+  if (!current?.bars) return;
+  const box = e.currentTarget.getBoundingClientRect();
+  seek(((e.clientX - box.left) / box.width) * current.bars);
+});
 $("#stop").addEventListener("click", stop);
 
 // Open whatever is in the editor right now, including your edits.
@@ -257,7 +298,10 @@ document.addEventListener("keydown", (e) => {
   else if (e.code === "Space") playing ? stop() : current && select(current, true);
   else if (e.key === "ArrowDown" || e.key === "ArrowRight") step(1);
   else if (e.key === "ArrowUp" || e.key === "ArrowLeft") step(-1);
-  else if (e.key === "]") stepAlbum(1);
+  else if (e.key === "." || e.key === ",") {
+    if (!current?.bars) return;
+    seek((playing ? position() : 0) + (e.key === "." ? 4 : -4));
+  } else if (e.key === "]") stepAlbum(1);
   else if (e.key === "[") stepAlbum(-1);
   else if (e.key.toLowerCase() === "r") {
     const others = list.filter((s) => s !== current);

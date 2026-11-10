@@ -40,7 +40,7 @@ Four signals recovered from a city that never sleeps: [Curfew](songs/curfew.stru
 
 <img src="art/covers/old.svg" alt="The Old World cover" width="180" align="right" />
 
-Fire, stone and a long road east: [The Long Road East](songs/the-long-road-east.strudel) (pastoral folk in 6/8), [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) (dark choral) and [The Ember Crown](songs/the-ember-crown.strudel) (epic hybrid).
+Fire, stone and a long road east: [The Long Road East](songs/the-long-road-east.strudel) (pastoral folk in 6/8), [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) (dark choral), [Lament for Two Strings](songs/lament-for-two-strings.strudel) (a violin and a cello, alone) and [The Ember Crown](songs/the-ember-crown.strudel) (epic hybrid).
 
 <br clear="right" />
 
@@ -79,7 +79,7 @@ A few ideas do most of the work:
 ## The player
 
 - **Each album has its own world**, with its own palette, typefaces, title effect, button words, background (starlings, rain, embers or snow) and oscilloscope (orbit, ring, sun or aurora). All the visuals react to the audio itself, so they follow your edits too.
-- **Albums play through**, with a progress bar and the current bar of the arrangement.
+- **Albums play through**, with a progress bar and the current bar of the arrangement. Click the bar to move through a track, or press <kbd>,</kbd> and <kbd>.</kbd> to go four bars back or forward.
 - **Live editing.** Change any line and press <kbd>Ctrl</kbd> + <kbd>Enter</kbd>; <kbd>Ctrl</kbd> + <kbd>.</kbd> stops. **Open in Strudel** sends your edited version to [strudel.cc](https://strudel.cc).
 - **Keys.** <kbd>1</kbd>–<kbd>9</kbd> pick a song, <kbd>Space</kbd> plays or stops, arrows step through, <kbd>[</kbd> <kbd>]</kbd> change album, <kbd>R</kbd> picks one at random.
 
