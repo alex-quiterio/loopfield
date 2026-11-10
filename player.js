@@ -13,9 +13,9 @@ const ALBUMS = [
     id: "city",
     title: "Transmissions from 2089",
     kicker: "// intercepted · sector 7",
-    lede: "Four signals recovered from a city that never sleeps. Sirens, hives, choirs that know your name, and the last broadcast from the outer districts.",
+    lede: "Five signals recovered from a city that never sleeps. Sirens, hives, choirs that know your name, and the last broadcast from the outer districts.",
     words: { play: "▶ transmit", stop: "■ cut", label: "now decoding" },
-    songs: ["curfew", "arcology", "surveillance-choir", "signal-lost"],
+    songs: ["curfew", "arcology", "surveillance-choir", "signal-lost", "riot-frequency"],
   },
   {
     id: "old",

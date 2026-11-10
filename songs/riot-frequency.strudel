@@ -1,0 +1,112 @@
+// RIOT FREQUENCY — psytrance metal · 145 bpm · E phrygian
+// A nylon guitar on a rooftop, a doom riff from the street below, and then the whole grid starts to gallop.
+// 152 bars · 4:12
+setcpm(145/4)
+
+// --- hands, not a sequencer -----------------------------------------------------------------
+// every guitar part is picked a little unevenly and lands a few milliseconds late
+const human = (p, seed) => p
+  .velocity(rand.early(seed).range(.7, 1))
+  .late(rand.early(seed + 1).range(0, .008).segment(16))
+
+// --- the rooftop: a nylon guitar walking down the Andalusian steps (Am, G, F, E) ----------------
+const nylon = (p, seed) => human(p, seed).s("gm_acoustic_guitar_nylon").release(.4).room(.5).roomsize(3)
+const steps = nylon(note(`<
+  [a2 e3 a3 c4 e4 c4 a3 e3]
+  [g2 d3 g3 b3 d4 b3 g3 d3]
+  [f2 c3 f3 a3 c4 a3 f3 c3]
+  [e2 b2 e3 g#3 b3 g#3 e3 [b3 e4]]
+>`), 1).gain(.95)
+const song = nylon(note("<~ ~ ~ ~ [~ e5@5 d5@2] [d5@3 c5 b4@3 [c5 b4]] [c5@5 b4 a4@2] [g#4@3 b4 e5@4]>"), 5).gain(1.1)
+
+// --- the amp: a guitar built from raw waves, so it bites the same on every machine ---------------
+// root, fifth and octave; two saws spread left and right, a square underneath for the body
+const amp = (p, seed) => human(p, seed).add(note("[0,7,12]")).layer(
+  (x) => x.s("sawtooth").pan(.25),
+  (x) => x.s("sawtooth").add(note(.12)).pan(.75),
+  (x) => x.s("square").sub(note(12)).pan(.5),
+).hpf(90).lpq(4)
+// doom: slow, half-time, leaning on the tritone
+const doom = amp(note("<[e2@3 f2] [bb2@4] [e2@3 g2] [f2@2 bb2@2]>"), 11)
+  .attack(.01).release(.3).lpf(2200).gain(.4)
+// the gallop: one long, two short, forever
+const gallop = amp(note(`<
+  [e2 ~ e2 e2 e2 ~ e2 e2 g2 ~ g2 g2 f2 ~ f2 f2]
+  [e2 ~ e2 e2 e2 ~ e2 e2 bb2 ~ a2 g2 f2 ~ e2 d2]
+>`), 13).clip(.7).release(.03).lpf("[2600 ~ 1300 1500]*4").gain(.42)
+// the chug: sixteenths picked down, muted, with the odd notes let out
+const chug = amp(note(`<
+  [e2 e2 e2 e2 f2 e2 e2 e2 g2 e2 e2 e2 f2 e2 bb2 e2]
+  [e2 e2 e2 e2 f2 e2 e2 e2 g2 e2 f2 e2 [d2 e2] f2 g2 bb2]
+>`), 17).clip(.6).release(.02).lpf("[2400 1100 1400 1100]*4").gain(.42)
+// the changes the leads sing over, galloped or held
+const changes = "<e2 e2 c2 d2 e2 g2 f2 f2>"
+const ride = amp(note(changes).struct("[x ~ x x]*4"), 19)
+  .clip(.7).release(.03).lpf("[2600 ~ 1300 1500]*4").gain(.4)
+const wall = amp(note(changes), 21).attack(.01).release(.2).lpf(2000).gain(.28)
+
+// --- two lead guitars a third apart, because that is the law -------------------------------------
+const lead = (p, seed) => human(p, seed).add(note(12)).s("sawtooth")
+  .lpf(3800).lpq(7).vib(6).vibmod(perlin.range(.1, .3)).attack(.02).release(.25)
+  .delay(.3).delaytime(3/8).delayfeedback(.35).room(.4)
+const twins = stack(
+  lead(note("<[e4@3 f4] [g4@2 f4 e4] [g4@3 a4] [b4@4] [c5@3 b4] [a4@2 g4 f4] [f4@3 g4] [e4@4]>"), 23).pan(.35),
+  lead(note("<[g4@3 a4] [b4@2 a4 g4] [b4@3 c5] [d5@4] [e5@3 d5] [c5@2 b4 a4] [a4@3 b4] [g4@4]>"), 27).pan(.65),
+).gain(.3)
+// and one of them alone, zig-zagging up the neck and falling back down it
+const shred = lead(n(`<
+  [0 2 1 3 2 4 3 5 4 6 5 7 6 8 7 9]
+  [11 9 10 8 9 7 8 6 7 5 6 4 5 3 4 2]
+  [7 4 6 4 5 4 7 4 9 4 8 4 11 4 9 4]
+  [14 13 12 11 10 9 8 7 6 5 4 3 2 1 0 -1]
+>`).scale("E3:phrygian"), 29).clip(.8).release(.05).gain(.32)
+
+// --- the grid: a psytrance engine ------------------------------------------------------------------
+// the kick takes the beat, the bass takes the three sixteenths after it, and neither ever stops
+const kick = s("bd*4").bank("RolandTR909").lpf(4000).gain(.52)
+const roll = (roots) => note(roots).struct("[~ x x x]*4").s("sawtooth")
+  .lpf(sine.range(350, 1100).slow(16)).lpq(9).decay(.09).sustain(0).gain(.6)
+const bass = roll("<e2!6 f2 g2>")
+const offhat = s("[~ hh]*4").bank("RolandTR909").hpf(7000).gain(.4)
+const hats = s("hh*16").bank("RolandTR909").hpf(8000).gain("[.2 .08 .13 .08]*4")
+// the acid line: a zig-zag through the scale with a filter that opens over eight bars
+const acid = n("<[0 7 1 5 0 8 1 5 0 7 3 5 0 10 8 7] [0 7 1 5 0 8 1 5 3 7 5 8 7 5 3 1]>")
+  .scale("E3:phrygian").s("sawtooth")
+  .lpf(sine.range(500, 5000).slow(8)).lpq(16).decay(.11).sustain(0)
+  .delay(.35).delaytime(3/16).delayfeedback(.45).pan(sine.range(.25, .75).slow(3)).gain(.32)
+const drone = note("[e1,e2]").slow(4).s("sawtooth").lpf(sine.range(120, 500).slow(8))
+  .attack(2).release(3).room(.8).gain(.25)
+
+// --- drums that belong to the guitars ------------------------------------------------------------------
+const slow = stack(
+  s("bd ~ ~ ~ ~ ~ bd ~").bank("RolandTR909").lpf(3000).gain(.55),
+  s("~ ~ sd ~").bank("RolandTR909").room(.6).gain(.6),
+)
+const snare = s("~ sd ~ sd").bank("RolandTR909").room(.3).gain(.5)
+const half = s("~ ~ sd ~").bank("RolandTR909").room(.5).gain(.6)
+const double = s("bd*16").bank("RolandTR909").lpf(3500).gain("[.45 .22 .3 .22]*4")
+const crash = s("<cr ~ ~ ~>").bank("RolandTR909").room(.6).gain(.3)
+
+// --- pressure: four bars with no kick, a snare roll and rising noise ---------------------------------------
+const build = stack(
+  s("sd*16").bank("RolandTR909").hpf(saw.range(200, 2500).slow(4)).gain(saw.range(.08, .5).slow(4)),
+  s("white").struct("x*16").decay(.04).sustain(0).hpf(saw.range(1000, 9000).slow(4)).gain(saw.range(.04, .25).slow(4)),
+  bass.hpf(saw.range(100, 1500).slow(4)),
+)
+
+// --- the night ------------------------------------------------------------------------------------------------
+arrange(
+  [8,  stack(steps, song)],                                                           // a rooftop, before
+  [8,  stack(drone, slow, crash, doom)],                                              // the street answers
+  [4,  build],
+  [16, stack(kick, bass, offhat, hats, acid)],                                        // the grid
+  [16, stack(kick, bass, offhat, hats, half, crash, gallop)],                         // the gallop
+  [16, stack(kick, roll(changes), offhat, snare, crash, ride, twins)],                // two guitars, one tune
+  [8,  stack(drone, steps, song, roll("<a2 g2 f2 e2>").lpf(400).gain(.4))],           // the rooftop again
+  [4,  stack(build, acid.ply(2).gain(.2))],
+  [16, stack(double, bass, offhat, snare, crash, chug)],                              // riot
+  [16, stack(double, bass, offhat, snare, crash, chug, shred, acid.gain(.18))],       // up the neck and down
+  [16, stack(kick, bass, offhat, hats, acid.ply("<1 1 1 2>"))],                       // the grid, glitching
+  [16, stack(double, roll(changes), offhat, snare, crash, ride, wall, twins)],        // everyone, at once
+  [8,  stack(steps, song, drone.gain(.15))],                                          // morning
+)

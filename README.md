@@ -32,7 +32,7 @@ An album in six movements, about 37 minutes. It goes from a rocket's countdown t
 
 <img src="art/covers/city.svg" alt="Transmissions from 2089 cover" width="180" align="right" />
 
-Four signals recovered from a city that never sleeps: [Curfew](songs/curfew.strudel) (industrial techno), [The Arcology Sleeps](songs/arcology.strudel) (dark ambient), [Surveillance Choir](songs/surveillance-choir.strudel) (darkwave) and [Signal Lost](songs/signal-lost.strudel) (glitch electro).
+Five signals recovered from a city that never sleeps: [Curfew](songs/curfew.strudel) (industrial techno), [The Arcology Sleeps](songs/arcology.strudel) (dark ambient), [Surveillance Choir](songs/surveillance-choir.strudel) (darkwave), [Signal Lost](songs/signal-lost.strudel) (glitch electro) and [Riot Frequency](songs/riot-frequency.strudel) (psytrance metal, 4:12).
 
 <br clear="right" />
 
@@ -40,7 +40,14 @@ Four signals recovered from a city that never sleeps: [Curfew](songs/curfew.stru
 
 <img src="art/covers/old.svg" alt="The Old World cover" width="180" align="right" />
 
-Fire, stone and a long road east: [The Long Road East](songs/the-long-road-east.strudel) (pastoral folk in 6/8), [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) (dark choral), [Lament for Two Strings](songs/lament-for-two-strings.strudel) (a violin and a cello, alone) and [The Ember Crown](songs/the-ember-crown.strudel) (epic hybrid).
+Fire, stone and a long road east. Three of these are short loops that play until you stop them; the lament is a full arrangement with a beginning and an end.
+
+| # | Track | Style | Length | |
+| --- | --- | --- | --- | --- |
+| 01 | [The Long Road East](songs/the-long-road-east.strudel) | pastoral folk · 6/8 · D mixolydian | loop | Green hills, a borrowed walking stick, and a road that goes on further than anyone meant to walk. |
+| 02 | [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) | dark choral · D phrygian | loop | Deep in the stone, forges that have burned for a thousand years, and voices that remember why. |
+| 03 | [Lament for Two Strings](songs/lament-for-two-strings.strudel) | lament and danse · D minor | 4:53 | A violin and a cello in an empty hall. At midnight the dead get up to dance; by morning it is only the two of them again. |
+| 04 | [The Ember Crown](songs/the-ember-crown.strudel) | epic hybrid · C minor | loop | Banners on the ridge, a crown of fire on the horizon, and no road back. |
 
 <br clear="right" />
 
