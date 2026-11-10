@@ -23,7 +23,7 @@ const ALBUMS = [
     kicker: "~ songs from before the machines ~",
     lede: "Fire, stone and a long road east. Flutes on green hills, voices under the mountain, and a crown burning on the horizon.",
     words: { play: "▶ begin", stop: "■ rest", label: "now telling" },
-    songs: ["the-long-road-east", "halls-under-the-mountain", "lament-for-two-strings", "the-ember-crown"],
+    songs: ["the-long-road-east", "halls-under-the-mountain", "lament-for-two-strings", "the-ember-crown", "midnight-freight"],
   },
   {
     id: "edge",

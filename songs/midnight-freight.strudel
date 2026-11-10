@@ -1,0 +1,80 @@
+// MIDNIGHT FREIGHT — noir country · 84 bpm · A minor
+// A man in a black coat, a freight line out of town, and one thing he did that the rain will not wash off.
+// 88 bars · 4:11
+setcpm(84/4)
+
+// --- a small band in a back room: nobody plays exactly on the beat ----------------------------
+const human = (p, seed) => p
+  .velocity(rand.early(seed).range(.7, 1))
+  .late(rand.early(seed + 1).range(0, .008).segment(8))
+// slapback: one short echo, the sound of a small tiled studio
+const slap = (p) => p.delay(.3).delaytime(.12).delayfeedback(.12).room(.35)
+
+// --- eight bars that keep coming round: Am, Am, Dm, Am, F, E7, Am, Am --------------------------
+const chords = "<[a3,c4,e4] [a3,c4,e4] [a3,d4,f4] [a3,c4,e4] [a3,c4,f4] [g#3,b3,d4,e4] [a3,c4,e4] [a3,c4,e4]>"
+// boom: root, then the fifth below it, and a walk back up at the end of the line
+const walk = "<[a1 ~ e1 ~] [a1 ~ e1 ~] [d2 ~ a1 ~] [a1 ~ e1 ~] [f1 ~ c2 ~] [e1 ~ b1 ~] [a1 ~ e1 ~] [a1 ~ [e1 f#1] g#1]>"
+
+// --- the train: boom-chicka-boom -----------------------------------------------------------------
+const bass = human(note(walk), 1).s("gm_acoustic_bass").release(.2).lpf(1200).gain(1)
+// a muted guitar doubling the bass an octave up, the way the old records did it
+const tictac = slap(human(note(walk).add(note(12)), 3).s("gm_electric_guitar_muted").clip(.6).lpf(2200)).gain(.7)
+// chicka: down, then a lighter stroke back up
+const strum = human(note(chords).struct("~ [x x] ~ [x x]"), 5).s("gm_acoustic_guitar_steel")
+  .clip(.35).release(.05).hpf(250).gain("[.5 .3]*4")
+// brushes on a snare, made of noise, leaning on two and four
+const brush = s("white").struct("x*8").decay("[.04 .04 .11 .05]*2").sustain(0)
+  .hpf(1800).lpf(6500).gain("[.14 .08 .3 .1]*2")
+const thump = s("bd ~ bd ~").bank("LinnDrum").lpf(450).gain(.5)
+const train = stack(bass, tictac, strum, brush, thump)
+
+// --- the man: a low twanging guitar that says very little ------------------------------------------
+const tune = `<
+  [a2@3 c3 e3@4]
+  [e3@2 d3@2 c3@3 a2]
+  [d3@3 f3 a3@4]
+  [a3@2 g3 e3@3 ~@2]
+  [f3@3 a3 c4@4]
+  [b3@2 g#3@2 e3@3 ~]
+  [a2@2 c3 e3 a3@4]
+  ~
+>`
+const twang = slap(human(note(tune), 7).s("gm_electric_guitar_clean")
+  .release(.3).vib(5).vibmod(.12).lpf(2600)).gain(1)
+// the same words, hummed, further back in the room
+const hum = human(note(tune), 9).s("gm_voice_oohs").attack(.15).release(.4).lpf(1500).room(.7).gain(.55)
+
+// --- the city: a muted trumpet two streets away, an organ behind a wall ------------------------------
+const trumpet = human(note(`<
+  [~@4 e4 a4@3]
+  [c5@3 b4 a4@4]
+  [~@4 f4 a4@3]
+  e4
+  [~@2 c5@2 a4 f4@3]
+  [e4@3 g#4 b4@4]
+  [a4@6 ~@2]
+  ~
+>`).add(note(rand.range(-.08, .08))), 11).s("gm_muted_trumpet")
+  .attack(.04).release(.3).vib(5.5).vibmod(perlin.range(.05, .25)).lpf(3200)
+  .room(.85).roomsize(6).gain(.65)
+const organ = note(chords).sub(note(12)).s("gm_drawbar_organ").attack(.3).release(.6).lpf(1100).room(.6).gain(.19)
+const piano = note("<[a1,a2] ~ [d1,d2] ~ [f1,f2] [e1,e2] [a1,a2] ~>").s("piano").room(.6).gain(.55)
+
+// --- the weather --------------------------------------------------------------------------------------
+const rain = s("pink").hpf(1200).lpf(7000).gain(.3)
+const bell = note("<[a3,e4] ~>").s("gm_tubular_bells").room(.9).roomsize(6).gain(1)
+
+// --- one night ----------------------------------------------------------------------------------------
+arrange(
+  [8,  stack(rain, bell, bass.mask("<0!4 1!4>"))],                    // rain, a bell, and footsteps
+  [8,  stack(rain, train)],                                           // the freight starts to roll
+  [16, stack(rain, train, twang)],                                    // what he did
+  [8,  stack(rain, train, organ, trumpet)],                           // the city answers
+  [16, stack(rain, train, twang, hum, piano)],                        // what it cost him
+  [8,  stack(rain, bass, brush, piano, bell, trumpet)],               // waiting at the crossing
+  [16, stack(rain, train, twang, organ, trumpet.gain(.45), piano)],    // he gets on anyway
+  [7,  stack(rain, bell, bass, brush, twang)],                         // tail lights
+  [1,  stack(rain,
+    slap(note("[a2 e3 g#3 c4]/2").s("gm_electric_guitar_clean").vib(5).vibmod(.15).lpf(2600)).gain(1),
+    note("a1").s("gm_acoustic_bass").gain(1))],                      // and one chord that settles nothing
+)

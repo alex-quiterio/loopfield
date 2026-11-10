@@ -40,7 +40,7 @@ Five signals recovered from a city that never sleeps: [Curfew](songs/curfew.stru
 
 <img src="art/covers/old.svg" alt="The Old World cover" width="180" align="right" />
 
-Fire, stone and a long road east. Three of these are short loops that play until you stop them; the lament is a full arrangement with a beginning and an end.
+Fire, stone and a long road east. Three of these are short loops that play until you stop them; the lament and the freight are full arrangements with a beginning and an end.
 
 | # | Track | Style | Length | |
 | --- | --- | --- | --- | --- |
@@ -48,6 +48,7 @@ Fire, stone and a long road east. Three of these are short loops that play until
 | 02 | [Halls Under the Mountain](songs/halls-under-the-mountain.strudel) | dark choral · D phrygian | loop | Deep in the stone, forges that have burned for a thousand years, and voices that remember why. |
 | 03 | [Lament for Two Strings](songs/lament-for-two-strings.strudel) | lament and danse · D minor | 4:53 | A violin and a cello in an empty hall. At midnight the dead get up to dance; by morning it is only the two of them again. |
 | 04 | [The Ember Crown](songs/the-ember-crown.strudel) | epic hybrid · C minor | loop | Banners on the ridge, a crown of fire on the horizon, and no road back. |
+| 05 | [Midnight Freight](songs/midnight-freight.strudel) | noir country · A minor | 4:11 | A man in a black coat, a freight line out of town, and one thing he did that the rain will not wash off. |
 
 <br clear="right" />
 
