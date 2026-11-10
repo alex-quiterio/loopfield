@@ -1,0 +1,105 @@
+// LAMENT FOR TWO STRINGS — lament and danse · 54 bpm · D minor
+// A violin and a cello in an empty hall. At midnight the dead get up to dance; by morning it is only the two of them again.
+// 66 bars · 4:53
+setcpm(54/4)
+
+// --- two players, not two machines -----------------------------------------------------
+// each one is a little late, a little out of tune and never twice as loud, in their own way
+const human = (p, seed) => p
+  .add(note(rand.early(seed).range(-.07, .07)))            // intonation
+  .velocity(rand.early(seed + 1).range(.7, 1))             // bow pressure
+  .late(rand.early(seed + 2).range(0, .006).segment(48))   // up to 25 ms behind the beat
+const hall = (p) => p.room(.9).roomsize(7)
+
+// --- the ground: a bass that only ever walks down ------------------------------------
+// Dm, Dm/C, Bb, A, Gm, Dm/F, Em7b5, A7: one bar each
+const ground = "<d3 c3 bb2 a2 g2 f2 e2 a2>"
+const broken = `<
+  [d2 a2 d3 f3 a3 f3 d3 a2]
+  [c2 a2 d3 f3 a3 f3 d3 a2]
+  [bb2 d3 f3 bb3 d4 bb3 f3 d3]
+  [a2 e3 a3 c#4 e4 c#4 a3 e3]
+  [g2 d3 g3 bb3 d4 bb3 g3 d3]
+  [f2 d3 f3 a3 d4 a3 f3 d3]
+  [e2 d3 g3 bb3 d4 bb3 g3 d3]
+  [a2 e3 g3 c#4 e4 c#4 g3 e3]
+>`
+
+// --- the lament: eight bars that ask, eight that answer --------------------------------
+// it breathes before it speaks, leans on passing notes and turns before it lands
+const ask = note(`<
+  [~ f5@5 e5@2]
+  [d5@3 e5 f5@3 [e5 d5]]
+  [d5@5 c5 bb4@2]
+  [c#5@3 [d5 c#5] a4@3 ~]
+  [bb4@4 a4 g4 a4@2]
+  [~ a4 d5 f5 a5@4]
+  [g5@3 f5 e5@3 d5]
+  [e5@4 c#5@3 ~]
+>`)
+const answer = note(`<
+  [d5@3 f5 a5@4]
+  [a5@2 bb5 a5@2 g5@3]
+  [f5@3 e5 d5@2 bb4@2]
+  [c#5@5 d5 e5@2]
+  [d5@4 c5 bb4@3]
+  [a4@3 g4 f4@3 ~]
+  [g4@4 f4 e4@3]
+  [e4@3 d4 c#4@3 ~]
+>`)
+// an octave down, where the violin is darkest and the cello sings
+const low = (p) => p.sub(note(12))
+
+// --- the two voices, bowed slowly ------------------------------------------------------
+const violin = (p) => hall(human(p, 1).s("gm_violin")
+  .attack(rand.range(.06, .2)).release(.9)
+  .vib(rand.range(5, 6.2)).vibmod(perlin.range(.06, .22))
+  .lpf(3800).gain(sine.range(.4, .6).slow(8)))
+const cello = (p) => hall(human(p, 5).s("gm_cello")
+  .attack(rand.range(.1, .25)).release(1)
+  .vib(rand.range(4.6, 5.6)).vibmod(perlin.early(9).range(.05, .18))
+  .lpf(2600).gain(sine.range(.45, .62).slow(8)))
+
+const drone = hall(note("[d2,a2]").slow(2).s("gm_cello").attack(2).release(3).lpf(900).gain(.34))
+const bass  = hall(human(note(ground), 11).s("gm_cello").attack(.4).release(1.5).lpf(1400).gain(.5))
+// broken chords that lean into the top of each bar and fall away from it
+const arps  = hall(human(note(broken), 15).s("gm_cello").attack(.06).release(.6).lpf(2200)
+  .gain("[.36 .22 .26 .3 .38 .3 .25 .2]".mul(perlin.range(.8, 1.1))))
+
+// --- midnight: the danse -----------------------------------------------------------------
+// four bars of waltz fit inside every slow bar, and the same ground turns under them
+const keyHi = "<D4:harmonic:minor D4:minor!2 D4:harmonic:minor D4:minor!3 D4:harmonic:minor>"
+const keyLo = "<D2:harmonic:minor D2:minor!2 D2:harmonic:minor D2:minor!3 D2:harmonic:minor>"
+const chord = "<0 0 -2 -3 3 2 1 4>"
+const fast  = (p, seed) => hall(human(p, seed).s("gm_violin").attack(.01).release(.12).clip(.9)
+  .lpf(5200).gain("[.5 .32 .38 .32 .4 .34]*4".mul(saw.range(.8, 1.15))))
+// the devil's interval, struck on the open strings, then let go
+const strike = hall(human(note("[[a4,eb5] ~ ~] [[a4,eb5] ~ ~] [[a4,eb5] [a4,eb5] [a4,eb5]] [[a4,e5]@2 ~]"), 21)
+  .s("gm_violin").attack(.01).release(.2).clip(.8).lpf(4500).gain(.42))
+// zig-zags: up the scale in thirds and back down again
+const zig = fast(n("0 2 1 3 2 4 3 5 4 6 5 7 9 7 8 6 7 5 6 4 5 3 4 2")
+  .add(n(chord)).scale(keyHi), 23)
+// the bow rocking across two strings against one held note, then a fall in sixteenths
+const zag = fast(n("7 4 6 4 5 4 7 4 6 4 5 4 9 4 8 4 7 4 [11 10] [9 8] [7 6] [5 4] [3 2] [1 0]")
+  .add(n(chord)).scale(keyHi), 27)
+// the cello keeps the waltz: a low step, then two dry chords
+const waltz = hall(human(n("[0 [9,11] [9,11] 4 [9,11] [9,11]]*2")
+  .add(n("<0 0 5 4 3 2 1 4>")).scale(keyLo), 31)
+  .s("gm_cello").attack(.01).release(.15).clip(.55).lpf(2400).gain("[.6 .3 .34]*4"))
+
+// --- one night in the hall ---------------------------------------------------------------
+arrange(
+  [4, stack(drone, bass)],                                                 // the cello, alone
+  [8, stack(drone, bass, violin(low(ask)))],                               // the violin asks, low on the G string
+  [8, stack(drone, arps, violin(ask))],                                    // the whole lament: the question,
+  [8, stack(drone, arps, violin(answer))],                                 // and the answer
+  [2, stack(waltz.gain(.3), strike)],                                      // midnight strikes
+  [8, stack(waltz, zig)],                                                  // the dead get up to dance
+  [8, stack(waltz, zag, cello(low(ask)))],                                 // and the cello mourns right through it
+  [8, stack(drone, bass, arps, violin(answer), cello(low(answer)))],       // morning: both, an octave apart
+  [8, stack(drone, bass.gain(.4), violin(low(ask)).degradeBy(.25))],       // what is left of it
+  [4, stack(
+    hall(note("[d2,a2,d3]").slow(4).s("gm_cello").attack(.6).release(4).lpf(1400).gain(.5)),
+    hall(note("[d4,f4]").slow(4).s("gm_violin").attack(1).release(4).lpf(3000).gain(.3)),
+  )],                                                                      // d minor, and the door
+)
